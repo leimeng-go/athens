@@ -35,11 +35,12 @@ func App(conf *config.Config) (http.Handler, error) {
 
 		netrcFromToken(conf.GithubToken)
 	}
-
+    // 挂载 .netrc git相关配置
 	// mount .netrc to home dir
 	// to have access to private repos.
 	initializeAuthFile(conf.NETRCPath)
-
+    
+	//用于指定Mercurial（Hg）的配置文件路径。Mercurial是一种分布式版本控制系统，用于管理代码仓库
 	// mount .hgrc to home dir
 	// to have access to private repos.
 	initializeAuthFile(conf.HGRCPath)
