@@ -23,6 +23,7 @@ const Service = "proxy"
 // should be defined. This is the nerve center of your
 // application.
 func App(conf *config.Config) (http.Handler, error) {
+	//环境配置，开发和生产
 	// ENV is used to help switch settings based on where the
 	// application is being run. Default is "development".
 	ENV := conf.GoEnv
@@ -45,15 +46,19 @@ func App(conf *config.Config) (http.Handler, error) {
 	// to have access to private repos.
 	initializeAuthFile(conf.HGRCPath)
 
+	//配置日志级别
 	logLvl, err := logrus.ParseLevel(conf.LogLevel)
 	if err != nil {
 		return nil, err
 	}
+	//构建日志实例,CloudRuntime用于配置日志格式                    
 	lggr := log.New(conf.CloudRuntime, logLvl)
-
+    //构建路由组
 	r := mux.NewRouter()
 	r.Use(
+		//请求ID中间件
 		mw.WithRequestID,
+		//日志中间件，拼接一些字段
 		mw.LogEntryMiddleware(lggr),
 		mw.RequestLogger,
 		secure.New(secure.Options{
@@ -61,8 +66,9 @@ func App(conf *config.Config) (http.Handler, error) {
 			SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
 		}).Handler,
 		mw.ContentType,
+	    
 	)
-
+    //某些负载均衡器的单个检查路由？
 	var subRouter *mux.Router
 	if prefix := conf.PathPrefix; prefix != "" {
 		// certain Ingress Controllers (such as GCP Load Balancer)
@@ -72,7 +78,7 @@ func App(conf *config.Config) (http.Handler, error) {
 		r.HandleFunc("/", healthHandler).Methods(http.MethodGet)
 		subRouter = r.PathPrefix(prefix).Subrouter()
 	}
-
+    //相关trance跟踪，例如jaeger
 	// RegisterExporter will register an exporter where we will export our traces to.
 	// The error from the RegisterExporter would be nil if the tracer was specified by
 	// the user and the trace exporter was created successfully.
@@ -90,7 +96,7 @@ func App(conf *config.Config) (http.Handler, error) {
 	} else {
 		defer flushTraces()
 	}
-
+     //状态监控，例如prometheus
 	// RegisterStatsExporter will register an exporter where we will collect our stats.
 	// The error from the RegisterStatsExporter would be nil if the proper stats exporter
 	// was specified by the user.
@@ -100,12 +106,12 @@ func App(conf *config.Config) (http.Handler, error) {
 	} else {
 		defer flushStats()
 	}
-
+    //使用BasicAuth账号密码认证
 	user, pass, ok := conf.BasicAuth()
 	if ok {
 		r.Use(basicAuth(user, pass))
 	}
-
+    //使用过滤
 	if !conf.FilterOff() {
 		mf, err := module.NewFilter(conf.FilterFile)
 		if err != nil {
@@ -119,12 +125,12 @@ func App(conf *config.Config) (http.Handler, error) {
 			Base: http.DefaultTransport,
 		},
 	}
-
+    //Hook是重新调用地址吗？
 	// Having the hook set means we want to use it
 	if vHook := conf.ValidatorHook; vHook != "" {
 		r.Use(mw.NewValidationMiddleware(client, vHook))
 	}
-
+    //下载的依赖存放方式
 	store, err := GetStorage(conf.StorageType, conf.Storage, conf.TimeoutDuration(), client)
 	if err != nil {
 		err = fmt.Errorf("error getting storage configuration: %w", err)
