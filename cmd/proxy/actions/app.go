@@ -136,11 +136,12 @@ func App(conf *config.Config) (http.Handler, error) {
 		err = fmt.Errorf("error getting storage configuration: %w", err)
 		return nil, err
 	}
-
+    //subRouter包含原来的
 	proxyRouter := r
 	if subRouter != nil {
 		proxyRouter = subRouter
 	}
+	//添加相关handler
 	if err := addProxyRoutes(
 		proxyRouter,
 		store,
