@@ -38,7 +38,7 @@ func addProxyRoutes(
 	r.HandleFunc("/version", versionHandler)
 	r.HandleFunc("/catalog", catalogHandler(s))
 	r.HandleFunc("/robots.txt", robotsHandler(c))
-
+   //Go模块的索引
 	indexer, err := getIndex(c)
 	if err != nil {
 		return err
@@ -87,18 +87,20 @@ func addProxyRoutes(
 	// 3. The stashpool manages limiting concurrent requests and passes them to stash.
 	// 4. The plain stash.New just takes a request from upstream and saves it into storage.
 	fs := afero.NewOsFs()
-
+    //go sumdb校验
 	if !c.GoBinaryEnvVars.HasKey("GONOSUMDB") {
 		c.GoBinaryEnvVars.Add("GONOSUMDB", strings.Join(c.NoSumPatterns, ","))
 	}
+	//校验环境变量
 	if err := c.GoBinaryEnvVars.Validate(); err != nil {
 		return err
 	}
+	// go get请求组件
 	mf, err := module.NewGoGetFetcher(c.GoBinary, c.GoGetDir, c.GoBinaryEnvVars, fs)
 	if err != nil {
 		return err
 	}
-
+   
 	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs)
 	checker := storage.WithChecker(s)
 	withSingleFlight, err := getSingleFlight(l, c, checker)
@@ -123,6 +125,7 @@ func addProxyRoutes(
 	dp := download.New(dpOpts, addons.WithPool(c.ProtocolWorkers))
 
 	handlerOpts := &download.HandlerOpts{Protocol: dp, Logger: l, DownloadFile: df}
+	//注册下载依赖相关路由
 	download.RegisterHandlers(r, handlerOpts)
 
 	return nil

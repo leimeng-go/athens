@@ -12,6 +12,8 @@ import (
 	"github.com/gomods/athens/pkg/index"
 )
 
+
+//Mysql 创建go模块的的索引，这个是表格初始化
 // New returns a new Indexer with a MySQL implementation.
 // It attempts to connect to the DB and create the index table
 // if it doesn ot already exist.
@@ -58,6 +60,7 @@ type indexer struct {
 	db *sql.DB
 }
 
+//Index 创建go模块的索引
 func (i *indexer) Index(ctx context.Context, mod, ver string) error {
 	const op errors.Op = "mysql.Index"
 	_, err := i.db.ExecContext(
@@ -73,6 +76,7 @@ func (i *indexer) Index(ctx context.Context, mod, ver string) error {
 	return nil
 }
 
+//Lines 根据时间和limit获取索引列表
 func (i *indexer) Lines(ctx context.Context, since time.Time, limit int) ([]*index.Line, error) {
 	const op errors.Op = "mysql.Lines"
 	if since.IsZero() {
