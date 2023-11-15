@@ -12,11 +12,12 @@ import (
 
 // PathLatest URL.
 const PathLatest = "/{module:.+}/@latest"
-
+// 获取依赖
 // LatestHandler implements GET baseURL/module/@latest.
 func LatestHandler(dp Protocol, lggr log.Entry, df *mode.DownloadFile) http.Handler {
 	const op errors.Op = "download.LatestHandler"
 	f := func(w http.ResponseWriter, r *http.Request) {
+
 		mod, err := paths.GetModule(r)
 		if err != nil {
 			lggr.SystemErr(errors.E(op, err))

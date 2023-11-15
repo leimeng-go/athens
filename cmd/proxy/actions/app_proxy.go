@@ -86,6 +86,7 @@ func addProxyRoutes(
 	// 2. The singleflight passes the stash to its parent: stashpool.
 	// 3. The stashpool manages limiting concurrent requests and passes them to stash.
 	// 4. The plain stash.New just takes a request from upstream and saves it into storage.
+	//申明一个文件系统相关接口
 	fs := afero.NewOsFs()
     //go sumdb校验
 	if !c.GoBinaryEnvVars.HasKey("GONOSUMDB") {
@@ -100,7 +101,7 @@ func addProxyRoutes(
 	if err != nil {
 		return err
 	}
-   
+   //vcs 控制器
 	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs)
 	checker := storage.WithChecker(s)
 	withSingleFlight, err := getSingleFlight(l, c, checker)

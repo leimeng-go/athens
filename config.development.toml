@@ -94,7 +94,7 @@ ShutdownTimeout = 60
         MaxRetries = 10
 [Storage]
     [Storage.Mongo]
-         URL = "mongodb://leimeng:181205@localhost:27017/athens"
+         URL = "mongodb://athens:181205@localhost:27017/athens"
          DefaultDBName = "athens"
          CertPaht = ""
          Insecure = false

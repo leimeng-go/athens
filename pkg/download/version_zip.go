@@ -17,6 +17,7 @@ const PathVersionZip = "/{module:.+}/@v/{version}.zip"
 func ZipHandler(dp Protocol, lggr log.Entry, df *mode.DownloadFile) http.Handler {
 	const op errors.Op = "download.ZipHandler"
 	f := func(w http.ResponseWriter, r *http.Request) {
+		lggr.Infof("请求zip下载")
 		mod, ver, err := getModuleParams(r, op)
 		if err != nil {
 			lggr.SystemErr(err)
