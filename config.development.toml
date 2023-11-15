@@ -55,7 +55,7 @@ TraceExporterURL ="http://localhost:14268"
 # 
 StatsExporter = ""
 # 
-SumDBs = ["https://sum.golang.org"]
+# SumDBs = ["https://sum.golang.org"]
 # 指定authens不要校验这些私有模块的数据完整性，直接返回403 Forbidden 
 NoSumPatterns= []
 # 用于定义Athens在找不到模块版本时的行为         
@@ -101,7 +101,7 @@ ShutdownTimeout = 60
 [Index] 
     [Index.MySQL]
         Protocol = "tcp"
-        Host = "localhost"
+        Host = "127.0.0.1"
         Port = 3306
         User = "root"
         Password = "181205"
