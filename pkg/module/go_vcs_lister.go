@@ -37,6 +37,7 @@ func NewVCSLister(goBinPath string, env []string, fs afero.Fs) UpstreamLister {
 	}
 }
 
+//List 获取module版本信息
 func (l *vcsLister) List(ctx context.Context, module string) (*storage.RevInfo, []string, error) {
 	const op errors.Op = "vcsLister.List"
 	_, span := observ.StartSpan(ctx, op.String())
@@ -46,7 +47,7 @@ func (l *vcsLister) List(ctx context.Context, module string) (*storage.RevInfo, 
 		return nil, nil, errors.E(op, err)
 	}
 	defer func() { _ = l.fs.RemoveAll(tmpDir) }()
-
+    //查看当前module的版本信息
 	cmd := exec.Command(
 		l.goBinPath,
 		"list", "-m", "-versions", "-json",

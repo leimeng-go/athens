@@ -35,9 +35,12 @@ type goModule struct {
 	GoModSum string `json:"goModSum"` // checksum for go.mod (as in go.sum)
 }
 
+// NewGoGetGetcher 创建fetcher通过go get tool 工具获取模板
+// goBinaryName go程序名称、gogetDir的文件夹名称、envVars 环境变量、fs文件系统
 // NewGoGetFetcher creates fetcher which uses go get tool to fetch modules.
 func NewGoGetFetcher(goBinaryName, gogetDir string, envVars []string, fs afero.Fs) (Fetcher, error) {
 	const op errors.Op = "module.NewGoGetFetcher"
+	//path检查go
 	if err := validGoBinary(goBinaryName); err != nil {
 		return nil, errors.E(op, err)
 	}
@@ -55,7 +58,8 @@ func (g *goGetFetcher) Fetch(ctx context.Context, mod, ver string) (*storage.Ver
 	const op errors.Op = "goGetFetcher.Fetch"
 	ctx, span := observ.StartSpan(ctx, op.String())
 	defer span.End()
-
+    
+	//创建临时目录
 	// setup the GOPATH
 	goPathRoot, err := afero.TempDir(g.fs, g.gogetDir, "athens")
 	if err != nil {
@@ -81,7 +85,7 @@ func (g *goGetFetcher) Fetch(ctx context.Context, mod, ver string) (*storage.Ver
 		_ = clearFiles(g.fs, goPathRoot)
 		return nil, errors.E(op, err)
 	}
-
+    //申明一个storage 
 	var storageVer storage.Version
 	storageVer.Semver = m.Version
 	info, err := afero.ReadFile(g.fs, m.Info)
@@ -121,7 +125,7 @@ func downloadModule(
 	version string,
 ) (goModule, error) {
 	const op errors.Op = "module.downloadModule"
-
+    //构建下载的uri
 	uri := strings.TrimSuffix(module, "/")
 	fullURI := fmt.Sprintf("%s@%s", uri, version)
 

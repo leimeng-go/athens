@@ -101,7 +101,7 @@ func addProxyRoutes(
 	if err != nil {
 		return err
 	}
-   //vcs 控制器
+   //vcs 控制器,获取module versions
 	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs)
 	checker := storage.WithChecker(s)
 	withSingleFlight, err := getSingleFlight(l, c, checker)
