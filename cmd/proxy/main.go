@@ -39,11 +39,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+    //新建http server 服务
 	srv := &http.Server{
 		Handler:           handler,
 		ReadHeaderTimeout: 2 * time.Second,
 	}
+	//空闲连接关闭标志位
 	idleConnsClosed := make(chan struct{})
 
 	go func() {
@@ -58,6 +59,7 @@ func main() {
 		if err := srv.Shutdown(ctx); err != nil {
 			log.Fatal(err)
 		}
+		//关闭空闲连接标志位
 		close(idleConnsClosed)
 	}()
 
@@ -69,7 +71,7 @@ func main() {
 			log.Fatal(http.ListenAndServe(conf.PprofPort, nil)) //nolint:gosec // This should not be exposed to the world.
 		}()
 	}
-
+    // Unix套接字和tcp的区别是，unix适合本地程序通信，tcp跨服务器
 	// Unix socket configuration, if available, takes precedence over TCP port configuration.
 	var ln net.Listener
 
@@ -98,6 +100,6 @@ func main() {
 	if !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
-
+    //堵塞主线程
 	<-idleConnsClosed
 }

@@ -233,6 +233,7 @@ func (p *protocol) GoMod(ctx context.Context, mod, ver string) ([]byte, error) {
 
 func (p *protocol) Zip(ctx context.Context, mod, ver string) (storage.SizeReadCloser, error) {
 	const op errors.Op = "protocol.Zip"
+	//链路跟踪
 	ctx, span := observ.StartSpan(ctx, op.String())
 	defer span.End()
 	zip, err := p.storage.Zip(ctx, mod, ver)
@@ -251,6 +252,7 @@ func (p *protocol) Zip(ctx context.Context, mod, ver string) (storage.SizeReadCl
 
 func (p *protocol) processDownload(ctx context.Context, mod, ver string, f func(newVer string) error) error {
 	const op errors.Op = "protocol.processDownload"
+	// 下载一个golang依赖库的超时时间是15分钟
 	// Create a new context with custom deadline and ditch whatever deadline was passed by the caller.
 	// This is needed so that the async go routines can continue even after the HTTP request is complete (which leads to context cancellation).
 	ctx, cancel := copyContextWithCustomTimeout(ctx, time.Minute*15)

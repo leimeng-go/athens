@@ -12,7 +12,6 @@ import (
 	"github.com/gomods/athens/pkg/index"
 )
 
-
 //Mysql 创建go模块的的索引，这个是表格初始化
 // New returns a new Indexer with a MySQL implementation.
 // It attempts to connect to the DB and create the index table
@@ -68,9 +67,10 @@ func (i *indexer) Index(ctx context.Context, mod, ver string) error {
 		`INSERT INTO indexes (path, version, timestamp) VALUES (?, ?, ?)`,
 		mod,
 		ver,
-		time.Now().Format(time.RFC3339Nano),
+		time.Now().Format("2006-01-02 15:04:05.000"),
 	)
 	if err != nil {
+		fmt.Printf("sql: %s\n",fmt.Sprintf("INSERT INTO indexes (path, version, timestamp) VALUES (%s, %s, %s)", mod,ver,time.Now().Format(time.RFC3339)))
 		return errors.E(op, err, getKind(err))
 	}
 	return nil
@@ -82,7 +82,7 @@ func (i *indexer) Lines(ctx context.Context, since time.Time, limit int) ([]*ind
 	if since.IsZero() {
 		since = time.Unix(0, 0)
 	}
-	sinceStr := since.Format(time.RFC3339Nano)
+	sinceStr := since.Format("2006-01-02 15:04:05.000")
 	rows, err := i.db.QueryContext(ctx, `SELECT path, version, timestamp FROM indexes WHERE timestamp >= ? LIMIT ?`, sinceStr, limit)
 	if err != nil {
 		return nil, errors.E(op, err)

@@ -15,6 +15,7 @@ import (
 // a ready-to-go http handler that serves up cmd/go's download protocol.
 type ProtocolHandler func(dp Protocol, lggr log.Entry, df *mode.DownloadFile) http.Handler
 
+// 传递相关protocol协议参数
 // HandlerOpts are the generic options for a ProtocolHandler.
 type HandlerOpts struct {
 	Protocol     Protocol

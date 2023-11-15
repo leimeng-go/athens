@@ -49,7 +49,7 @@ docs-docker: ## run the docs docker image
 setup-dev-env:
 	$(MAKE) dev
 
-.PHONY: lint
+.PHONY: lint·
 lint:
 	@golangci-lint run ./...
 
