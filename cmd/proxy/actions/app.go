@@ -130,7 +130,7 @@ func App(conf *config.Config) (http.Handler, error) {
 	if vHook := conf.ValidatorHook; vHook != "" {
 		r.Use(mw.NewValidationMiddleware(client, vHook))
 	}
-    //下载的依赖存放方式
+    // module storage mongo实现
 	store, err := GetStorage(conf.StorageType, conf.Storage, conf.TimeoutDuration(), client)
 	if err != nil {
 		err = fmt.Errorf("error getting storage configuration: %w", err)

@@ -103,7 +103,9 @@ func addProxyRoutes(
 	}
    //vcs 控制器,获取module versions
 	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs)
+	//检查模块版本是否存在
 	checker := storage.WithChecker(s)
+	//控制并发请求
 	withSingleFlight, err := getSingleFlight(l, c, checker)
 	if err != nil {
 		return err
@@ -155,11 +157,17 @@ func getSingleFlight(l *log.Logger, c *config.Config, checker storage.Checker) (
 		if c.SingleFlight == nil || c.SingleFlight.Redis == nil {
 			return nil, errors.New("redis config must be present")
 		}
+		//redis lock
 		return stash.WithRedisLock(
+			//日志
 			&athensLoggerForRedis{logger: l},
+			//redis 地址
 			c.SingleFlight.Redis.Endpoint,
+			//redis密码
 			c.SingleFlight.Redis.Password,
+			//检查module version
 			checker,
+			//redis lock相关配置
 			c.SingleFlight.Redis.LockConfig)
 	case "redis-sentinel":
 		if c.SingleFlight == nil || c.SingleFlight.RedisSentinel == nil {
