@@ -72,7 +72,7 @@ NetworkMode = "strict"
 # 
 DownloadURL = ""
 # 并发流控制
-SingleFlightType = "redis"
+SingleFlightType = "memory"
 # 索引存储类型
 IndexType = "mysql"
 # 链接的超时时间
@@ -111,6 +111,9 @@ ShutdownTimeout = 60
             timeout = "30s"
 
 
+
+# INFO[9:27AM]: incoming request	http-method=GET http-path=/github.com/go-playground/validator/v10/@v/v10.14.1.info http-status=200 request-id=57939237-c8a2-4c4c-b61e-8f6aac3c506c 
+# INFO[9:23AM]: incoming request	http-method=GET http-path=/github.com/go-playground/validator/v10/@v/v10.14.1.mod http-status=200 request-id=1d2a1e43-0c5c-4e43-814d-4c7d62490cea 
 
 
 

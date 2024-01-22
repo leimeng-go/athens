@@ -34,7 +34,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not load config file: %v", err)
 	}
-
+    fmt.Printf("配置内容: %+v\n", *conf)
 	handler, err := actions.App(conf)
 	if err != nil {
 		log.Fatal(err)
