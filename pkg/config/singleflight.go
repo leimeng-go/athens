@@ -7,6 +7,7 @@ type SingleFlight struct {
 	Etcd          *Etcd
 	Redis         *Redis
 	RedisSentinel *RedisSentinel
+	GCP           *GCP
 }
 
 // Etcd holds client side configuration
@@ -30,6 +31,8 @@ type RedisSentinel struct {
 	Endpoints        []string `envconfig:"ATHENS_REDIS_SENTINEL_ENDPOINTS"`
 	MasterName       string   `envconfig:"ATHENS_REDIS_SENTINEL_MASTER_NAME"`
 	SentinelPassword string   `envconfig:"ATHENS_REDIS_SENTINEL_PASSWORD"`
+	RedisUsername    string   `envconfig:"ATHENS_REDIS_USERNAME"`
+	RedisPassword    string   `envconfig:"ATHENS_REDIS_PASSWORD"`
 	LockConfig       *RedisLockConfig
 }
 
@@ -46,5 +49,17 @@ func DefaultRedisLockConfig() *RedisLockConfig {
 		TTL:        900,
 		Timeout:    15,
 		MaxRetries: 10,
+	}
+}
+
+// GCP is the configuration for GCP locking.
+type GCP struct {
+	StaleThreshold int `envconfig:"ATHENS_GCP_STALE_THRESHOLD"`
+}
+
+// DefaultGCPConfig returns the default GCP locking configuration.
+func DefaultGCPConfig() *GCP {
+	return &GCP{
+		StaleThreshold: 120,
 	}
 }

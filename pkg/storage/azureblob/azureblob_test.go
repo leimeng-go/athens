@@ -70,7 +70,9 @@ func getStorage(t testing.TB) *Storage {
 
 func getTestConfig(containerName string) *config.AzureBlobConfig {
 	key := os.Getenv("ATHENS_AZURE_ACCOUNT_KEY")
-	if key == "" {
+	resourceId := os.Getenv("ATHENS_AZURE_MANAGED_IDENTITY_RESOURCE_ID")
+	credentialScope := os.Getenv("ATHENS_AZURE_CREDENTIAL_SCOPE")
+	if key == "" && (resourceId == "" || credentialScope == "") {
 		return nil
 	}
 	name := os.Getenv("ATHENS_AZURE_ACCOUNT_NAME")
@@ -78,9 +80,11 @@ func getTestConfig(containerName string) *config.AzureBlobConfig {
 		return nil
 	}
 	return &config.AzureBlobConfig{
-		AccountName:   name,
-		AccountKey:    key,
-		ContainerName: containerName,
+		AccountName:               name,
+		AccountKey:                key,
+		ManagedIdentityResourceID: resourceId,
+		CredentialScope:           credentialScope,
+		ContainerName:             containerName,
 	}
 }
 

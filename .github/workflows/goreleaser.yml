@@ -1,28 +1,38 @@
----
-name: publish github release artifacts with goreleaser
+name: Publish Build Artifacts
+
 on:
   push:
-    tags: '*'
+    tags:
+      - '*'
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: unshallow
-        run: git fetch --prune --unshallow
-      - name: setup-go
-        uses: actions/setup-go@v4
         with:
-          go-version: "1.20"
-      - name: capture current date
+          fetch-depth: 0
+
+      - name: Set up Go
+        id: install-go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Download dependencies
+        run: go mod download
+        if: steps.install-go.outputs.cache-hit != 'true'
+
+      - name: Capture Current Date
         id: date
         run: echo "::set-output name=date::$(date -u '+%Y-%m-%d-%H:%M:%S-%Z')"
-      - name: goreleaser
-        uses: goreleaser/goreleaser-action@v4
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
-          args: release --rm-dist
+          args: release --clean
         env:
           DATE: ${{ steps.date.outputs.date }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

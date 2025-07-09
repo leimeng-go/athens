@@ -5,7 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
+	stdlog "log"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
@@ -17,6 +17,8 @@ import (
 	"github.com/gomods/athens/internal/shutdown"
 	"github.com/gomods/athens/pkg/build"
 	"github.com/gomods/athens/pkg/config"
+	athenslog "github.com/gomods/athens/pkg/log"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -32,74 +34,92 @@ func main() {
 	}
 	conf, err := config.Load(*configFile)
 	if err != nil {
-		log.Fatalf("could not load config file: %v", err)
+		stdlog.Fatalf("Could not load config file: %v", err)
 	}
-    fmt.Printf("配置内容: %+v\n", *conf)
-	handler, err := actions.App(conf)
+
+	logLvl, err := logrus.ParseLevel(conf.LogLevel)
 	if err != nil {
-		log.Fatal(err)
+		stdlog.Fatalf("Could not parse log level %q: %v", conf.LogLevel, err)
 	}
-    //新建http server 服务
+
+	logger := athenslog.New(conf.CloudRuntime, logLvl, conf.LogFormat)
+
+	// Turn standard logger output into logrus Errors.
+	logrusErrorWriter := logger.WriterLevel(logrus.ErrorLevel)
+	defer func() {
+		if err := logrusErrorWriter.Close(); err != nil {
+			logger.WithError(err).Warn("Could not close logrus writer pipe")
+		}
+	}()
+	stdlog.SetOutput(logrusErrorWriter)
+	stdlog.SetFlags(stdlog.Flags() &^ (stdlog.Ldate | stdlog.Ltime))
+
+	handler, err := actions.App(logger, conf)
+	if err != nil {
+		logger.WithError(err).Fatal("Could not create App")
+	}
+	//新建http server 服务
 	srv := &http.Server{
 		Handler:           handler,
 		ReadHeaderTimeout: 2 * time.Second,
 	}
-	//空闲连接关闭标志位
-	idleConnsClosed := make(chan struct{})
-
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, shutdown.GetSignals()...)
-		s := <-sigint
-		log.Printf("Received signal (%s): Shutting down server", s)
-
-		// We received an interrupt signal, shut down.
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(conf.ShutdownTimeout))
-		defer cancel()
-		if err := srv.Shutdown(ctx); err != nil {
-			log.Fatal(err)
-		}
-		//关闭空闲连接标志位
-		close(idleConnsClosed)
-	}()
 
 	if conf.EnablePprof {
 		go func() {
-			// pprof to be exposed on a different port than the application for security matters, not to expose profiling data and avoid DoS attacks (profiling slows down the service)
+			// pprof to be exposed on a different port than the application for security matters,
+			// not to expose profiling data and avoid DoS attacks (profiling slows down the service)
 			// https://www.farsightsecurity.com/txt-record/2016/10/28/cmikk-go-remote-profiling/
-			log.Printf("Starting `pprof` at port %v", conf.PprofPort)
-			log.Fatal(http.ListenAndServe(conf.PprofPort, nil)) //nolint:gosec // This should not be exposed to the world.
+			logger.WithField("port", conf.PprofPort).Infof("starting pprof")
+			logger.Fatal(http.ListenAndServe(conf.PprofPort, nil)) //nolint:gosec // This should not be exposed to the world.
 		}()
 	}
-    // Unix套接字和tcp的区别是，unix适合本地程序通信，tcp跨服务器
+	// Unix套接字和tcp的区别是，unix适合本地程序通信，tcp跨服务器
 	// Unix socket configuration, if available, takes precedence over TCP port configuration.
 	var ln net.Listener
 
 	if conf.UnixSocket != "" {
-		log.Printf("Starting application at Unix domain socket %v", conf.UnixSocket)
+		logger := logger.WithField("unixSocket", conf.UnixSocket)
+		logger.Info("Starting application")
 
 		ln, err = net.Listen("unix", conf.UnixSocket)
 		if err != nil {
-			log.Fatalf("error listening on Unix domain socket %v: %v", conf.UnixSocket, err)
+			logger.WithError(err).Fatal("Could not listen on Unix domain socket")
 		}
 	} else {
-		log.Printf("Starting application at port %v", conf.Port)
+		logger := logger.WithField("tcpPort", conf.Port)
+		logger.Info("Starting application")
 
 		ln, err = net.Listen("tcp", conf.Port)
 		if err != nil {
-			log.Fatalf("error listening on TCP port %v: %v", conf.Port, err)
+			logger.WithError(err).Fatal("Could not listen on TCP port")
 		}
 	}
 
-	if conf.TLSCertFile != "" && conf.TLSKeyFile != "" {
-		err = srv.ServeTLS(ln, conf.TLSCertFile, conf.TLSKeyFile)
-	} else {
-		err = srv.Serve(ln)
-	}
+	signalCtx, signalStop := signal.NotifyContext(context.Background(), shutdown.GetSignals()...)
+	reaper := shutdown.ChildProcReaper(signalCtx, logger.Logger)
 
-	if !errors.Is(err, http.ErrServerClosed) {
-		log.Fatal(err)
+	go func() {
+		defer signalStop()
+		if conf.TLSCertFile != "" && conf.TLSKeyFile != "" {
+			err = srv.ServeTLS(ln, conf.TLSCertFile, conf.TLSKeyFile)
+		} else {
+			err = srv.Serve(ln)
+		}
+
+		if !errors.Is(err, http.ErrServerClosed) {
+			logger.WithError(err).Fatal("Could not start server")
+		}
+	}()
+
+	// Wait for shutdown signal, then cleanup before exit.
+	<-signalCtx.Done()
+	logger.Infof("Shutting down server")
+
+	// We received an interrupt signal, shut down.
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(conf.ShutdownTimeout))
+	defer cancel()
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		logger.WithError(err).Fatal("Could not shut down server")
 	}
-    //堵塞主线程
-	<-idleConnsClosed
+	<-reaper.Done()
 }

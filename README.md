@@ -10,7 +10,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Open Source Helpers](https://www.codetriage.com/gomods/athens/badges/users.svg)](https://www.codetriage.com/gomods/athens)
 
-Welcome to the Athens project! We are a proxy server for the [Go Modules download API](https://docs.gomods.io/intro/protocol/).
+Welcome to the Athens project! Athens is an open source, enterprise ready implementation of the [Go Module proxy](https://go.dev/ref/mod#module-proxy) for the [Go Modules download API](https://docs.gomods.io/intro/protocol/).
 
 See our documentation site [https://docs.gomods.io](https://docs.gomods.io) for more details on the project.
 
@@ -28,8 +28,6 @@ We encourage you to [try it out](https://docs.gomods.io/install/), consider usin
 
 The proxy implements the [Go modules download protocol](https://docs.gomods.io/intro/protocol/).
 
-There is currently an **experimental** public proxy (at https://athens.azurefd.net) that you can use to try out Athens, without installing anything locally. We also have a community of folks using Athens in production inside their organizations as an internal proxy. In either deployment, developers set their `GOPROXY` environment variable to point to the Athens proxy of their choice. At that point, `go get`, `go build`, and more commands will use the proxy to download dependencies as necessary.
-
 Athens proxies are highly configurable, so they can work for lots of different deployments. For example, proxies support a wide variety of storage drivers including:
 
 - Cloud blob storage services
@@ -46,7 +44,7 @@ Speaking of contributing, read on!
 
 # Contributing
 
-If you use Athens for your development workflow, we hope that you'll consider contributing back to the project. Athens is widely used and has plenty of interesting work to do, from technical challenges to technical documentation to release management. We have a wonderful community that we would love you to be a part of. [Absolutely everyone is welcome](https://arschles.com/blog/absolutely-everybody-is-welcome/).
+If you use Athens for your development workflow, we hope that you'll consider contributing back to the project. Athens is widely used and has plenty of interesting work to do, from technical challenges to technical documentation to release management. We have a wonderful community that we would love you to be a part of. [Absolutely everyone is welcome](https://arschles.com/blog/absolutely-everybody/).
 
 The quickest way to get involved is by [filing issues](https://github.com/gomods/athens/issues/new/choose) if you find bugs or find that you need Athens to do something it doesn't.
 
@@ -54,7 +52,7 @@ If you'd like to help us tackle some of the technical / code challenges and you'
 
 >If you're not familiar with the standard GitHub contribution process, which Athens mostly follows, please see [this section of our documentation](https://docs.gomods.io/contributing/new/) to learn how to contribute. You can also take advantage of [@bketelsen](https://github.com/bketelsen)'s [great video](https://www.youtube.com/watch?v=bgSDcTyysRc) on how to contribute code. The information in these documents and videos will help you not only with this project, but can also help you contribute to many other projects on GitHub.
 
-If you decide to to contribute but aren't sure what to work on, we have a well maintained [list of good first issues](https://github.com/gomods/athens/contribute) that you should look at. If you find one that you would like to work on, please post a comment saying "I want to work on this", and then it's all yours to begin working on.
+If you decide to contribute but aren't sure what to work on, we have a well maintained [list of good first issues](https://github.com/gomods/athens/contribute) that you should look at. If you find one that you would like to work on, please post a comment saying "I want to work on this", and then it's all yours to begin working on.
 
 >We do recommend that you choose one of the issues on the above list, but you may also consider a different one from our [entire list](https://github.com/gomods/athens/issues). Many of the issues on that list are more complex and challenging.
 
@@ -66,7 +64,7 @@ It's not too long and it's ok for you to "skim" it (or even just read the first 
 
 If you're not ready to contribute code yet, there are plenty of other great ways to get involved:
 
-- Come talk to us in the `#athens` channel in the [Gophers slack](http://gophers.slack.com/). We’re a really friendly group, so come say hi and join us! Ping me (`@arschles` on slack) in the channel and I’ll give you the lowdown
+- Come talk to us in the `#athens` channel in the [Gophers slack](https://join.slack.com/t/gophers/shared_invite/zt-2x2fraaj5-Gai4CThbNTLvXKOxhbrDOQ). We’re a really friendly group, so come say hi and join us! Ping me (`@arschles` on slack) in the channel and I’ll give you the lowdown
 - Get familiar with the technology. There's lots to read about. Here are some places to start:
     - [Gentle Introduction to the Project](https://medium.com/@arschles/project-athens-c80606497ce1) - the basics of why we started this project
     - [The Download Protocol](https://medium.com/@arschles/project-athens-the-download-protocol-2b346926a818) - the core API that the proxy implements and the `go` CLI uses to download packages
@@ -76,8 +74,7 @@ If you're not ready to contribute code yet, there are plenty of other great ways
 
 # Built on the Shoulders of Giants
 
-The Athens project would not be possible without the amazing projects it builds on. Please see
-[SHOULDERS.md](./SHOULDERS.md) to see a list of them.
+The Athens project would not be possible without the amazing projects it builds on. Please see [SHOULDERS.md](./SHOULDERS.md) to see a list of them.
 
 # Coding Guidelines
 
@@ -94,4 +91,5 @@ If you have concerns, notice a code of conduct violation, or otherwise would lik
 related to this code of conduct, please reach out `@arschles` on the [Gophers Slack](https://gophers.slack.com/).
 
 ---
+
 Athens banner attributed to Golda Manuel

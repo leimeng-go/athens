@@ -339,6 +339,14 @@ It assumes that you already have the following:
             # Env override: ATHENS_AZURE_ACCOUNT_KEY
             AccountKey = "MY_AZURE_BLOB_ACCOUNT_KEY"
 
+            # Managed Identity Resource Id to use with the storage account
+            # Env override: ATHENS_AZURE_MANAGED_IDENTITY_RESOURCE_ID
+            ManagedIdentityResourceId = "MY_AZURE_MANAGED_IDENTITY_RESOURCE_ID"
+
+            # Storage Resource to use with the storage account
+            # Env override: ATHENS_AZURE_STORAGE_RESOURCE
+            StorageResource = "MY_AZURE_STORAGE_RESOURCE"
+
             # Name of container in the blob storage
             # Env override: ATHENS_AZURE_CONTAINER_NAME
             ContainerName = "MY_AZURE_BLOB_CONTAINER_NAME"
@@ -346,7 +354,7 @@ It assumes that you already have the following:
 ## External Storage
 
 External storage lets Athens connect to your own implementation of a storage backend. 
-All you have to do is implement the (storage.Backend)[https://github.com/gomods/athens/blob/main/pkg/storage/backend.go#L4] interface and run it behind an http server. 
+All you have to do is implement the [storage.Backend](https://github.com/gomods/athens/blob/main/pkg/storage/backend.go#L4) interface and run it behind an http server. 
 
 Once you implement the backend server, you must then configure Athens to use that storage backend as such:
 
@@ -437,6 +445,22 @@ You can also optionally specify a password to connect to the redis server with
             # Env override: ATHENS_REDIS_PASSWORD
             Password = ""
 
+Connecting to Redis via a [redis url](https://github.com/redis/redis-specifications/blob/master/uri/redis.txt) is also
+supported:
+
+    SingleFlightType = "redis"
+
+    [SingleFlight]
+        [SingleFlight.Redis]
+            # Endpoint is the redis endpoint for the single flight mechanism
+            # Env override: ATHENS_REDIS_ENDPOINT
+            # Note, if TLS is required use rediss:// instead.
+            Endpoint = "redis://user:password@127.0.0.1:6379:6379/0?protocol=3"
+
+If the redis url is invalid or cannot be parsed, Athens will fall back to treating `Endpoint` as if it were
+a normal `host:port` pair. If a password is supplied in the redis url, in addition to being provided in the `Password`
+configuration option, the two values must match otherwise Athens will fail to start.
+
 ##### Customizing lock configurations:
 If you would like to customize the distributed lock options then you can optionally override the default lock config to better suit your use-case:
 
@@ -492,3 +516,14 @@ Optionally, like `redis`, you can also specify a password to connect to the `red
           SentinelPassword = "sekret"
 
 Distributed lock options can be customised for redis sentinal as well, in a similar manner as described above for redis.
+
+
+### Using GCP as a singleflight mechanism
+
+The GCP singleflight mechanism does not required configuration, and works out of the box. It has a
+single option with which it can be customized:
+
+    [SingleFlight.GCP]
+        # Threshold for how long to wait in seconds for an in-progress GCP upload to
+        # be considered to have failed to unlock.
+        StaleThreshold = 120

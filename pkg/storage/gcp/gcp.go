@@ -17,6 +17,8 @@ import (
 type Storage struct {
 	bucket  *storage.BucketHandle
 	timeout time.Duration
+	// Deprecated: left for config backwards compatibility.
+	staleThreshold time.Duration
 }
 
 // New returns a new Storage instance backed by a Google Cloud Storage bucket.

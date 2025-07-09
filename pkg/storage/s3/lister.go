@@ -2,10 +2,12 @@ package s3
 
 import (
 	"context"
+	"slices"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/gomods/athens/pkg/errors"
 	"github.com/gomods/athens/pkg/observ"
 )
@@ -18,20 +20,25 @@ func (s *Storage) List(ctx context.Context, module string) ([]string, error) {
 	defer span.End()
 
 	modulePrefix := strings.TrimSuffix(module, "/") + "/@v"
-	lsParams := &s3.ListObjectsInput{
+
+	lsParams := &s3.ListObjectsV2Input{
 		Bucket: aws.String(s.bucket),
 		Prefix: aws.String(modulePrefix),
 	}
+	paginator := s3.NewListObjectsV2Paginator(s.s3API, lsParams)
 
-	loo, err := s.s3API.ListObjectsWithContext(ctx, lsParams)
-	if err != nil {
-		return nil, errors.E(op, err, errors.M(module))
+	var versions []string
+	for paginator.HasMorePages() {
+		loo, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, errors.E(op, err, errors.M(module))
+		}
+		versions = slices.Concat(versions, extractVersions(loo.Contents))
 	}
-
-	return extractVersions(loo.Contents), nil
+	return versions, nil
 }
 
-func extractVersions(objects []*s3.Object) []string {
+func extractVersions(objects []types.Object) []string {
 	var versions []string
 
 	for _, o := range objects {

@@ -32,7 +32,7 @@ func addProxyRoutes(
 	l *log.Logger,
 	c *config.Config,
 ) error {
-	r.HandleFunc("/", proxyHomeHandler)
+	r.HandleFunc("/", proxyHomeHandler(c))
 	r.HandleFunc("/healthz", healthHandler)
 	r.HandleFunc("/readyz", getReadinessHandler(s))
 	r.HandleFunc("/version", versionHandler)
@@ -101,12 +101,10 @@ func addProxyRoutes(
 	if err != nil {
 		return err
 	}
-   //vcs 控制器,获取module versions
-	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs)
-	//检查模块版本是否存在
+
+	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs, c.TimeoutDuration())
 	checker := storage.WithChecker(s)
-	//控制并发请求
-	withSingleFlight, err := getSingleFlight(l, c, checker)
+	withSingleFlight, err := getSingleFlight(l, c, s, checker)
 	if err != nil {
 		return err
 	}
@@ -143,7 +141,7 @@ func (l *athensLoggerForRedis) Printf(ctx context.Context, format string, v ...a
 	l.logger.WithContext(ctx).Printf(format, v...)
 }
 
-func getSingleFlight(l *log.Logger, c *config.Config, checker storage.Checker) (stash.Wrapper, error) {
+func getSingleFlight(l *log.Logger, c *config.Config, s storage.Backend, checker storage.Checker) (stash.Wrapper, error) {
 	switch c.SingleFlightType {
 	case "", "memory":
 		return stash.WithSingleflight, nil
@@ -178,6 +176,8 @@ func getSingleFlight(l *log.Logger, c *config.Config, checker storage.Checker) (
 			c.SingleFlight.RedisSentinel.Endpoints,
 			c.SingleFlight.RedisSentinel.MasterName,
 			c.SingleFlight.RedisSentinel.SentinelPassword,
+			c.SingleFlight.RedisSentinel.RedisUsername,
+			c.SingleFlight.RedisSentinel.RedisPassword,
 			checker,
 			c.SingleFlight.RedisSentinel.LockConfig,
 		)
@@ -185,7 +185,7 @@ func getSingleFlight(l *log.Logger, c *config.Config, checker storage.Checker) (
 		if c.StorageType != "gcp" {
 			return nil, fmt.Errorf("gcp SingleFlight only works with a gcp storage type and not: %v", c.StorageType)
 		}
-		return stash.WithGCSLock, nil
+		return stash.WithGCSLock(c.SingleFlight.GCP.StaleThreshold, s)
 	case "azureblob":
 		if c.StorageType != "azureblob" {
 			return nil, fmt.Errorf("azureblob SingleFlight only works with a azureblob storage type and not: %v", c.StorageType)

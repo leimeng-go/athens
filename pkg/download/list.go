@@ -18,6 +18,7 @@ const PathList = "/{module:.+}/@v/list"
 func ListHandler(dp Protocol, lggr log.Entry, df *mode.DownloadFile) http.Handler {
 	const op errors.Op = "download.ListHandler"
 	f := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		mod, err := paths.GetModule(r)
 		if err != nil {
 			lggr.SystemErr(errors.E(op, err))
@@ -27,10 +28,11 @@ func ListHandler(dp Protocol, lggr log.Entry, df *mode.DownloadFile) http.Handle
 
 		versions, err := dp.List(r.Context(), mod)
 		if err != nil {
-			severityLevel := errors.Expect(err, errors.KindNotFound)
+			severityLevel := errors.Expect(err, errors.KindNotFound, errors.KindGatewayTimeout)
 			err = errors.E(op, err, severityLevel)
 			lggr.SystemErr(err)
 			w.WriteHeader(errors.Kind(err))
+			_, _ = fmt.Fprintf(w, "not found: %s", strings.Replace(err.Error(), "exit status 1: go: ", "", 1))
 			return
 		}
 

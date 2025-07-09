@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/go-playground/validator/v10"
 	"github.com/gomods/athens/pkg/download/mode"
 	"github.com/gomods/athens/pkg/errors"
 	"github.com/kelseyhightower/envconfig"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 const defaultConfigFile = "athens.toml"
@@ -21,26 +21,28 @@ const defaultConfigFile = "athens.toml"
 // Config provides configuration values for all components.
 type Config struct {
 	TimeoutConf
-	GoEnv            string    `validate:"required" envconfig:"GO_ENV"`
-	GoBinary         string    `validate:"required" envconfig:"GO_BINARY_PATH"`
+	GoEnv            string    `envconfig:"GO_ENV"                    validate:"required"`
+	GoBinary         string    `envconfig:"GO_BINARY_PATH"            validate:"required"`
 	GoBinaryEnvVars  EnvList   `envconfig:"ATHENS_GO_BINARY_ENV_VARS"`
-	GoGetWorkers     int       `validate:"required" envconfig:"ATHENS_GOGET_WORKERS"`
+	GoGetWorkers     int       `envconfig:"ATHENS_GOGET_WORKERS"      validate:"required"`
 	GoGetDir         string    `envconfig:"ATHENS_GOGET_DIR"`
-	ProtocolWorkers  int       `validate:"required" envconfig:"ATHENS_PROTOCOL_WORKERS"`
-	LogLevel         string    `validate:"required" envconfig:"ATHENS_LOG_LEVEL"`
-	CloudRuntime     string    `validate:"required" envconfig:"ATHENS_CLOUD_RUNTIME"`
+	ProtocolWorkers  int       `envconfig:"ATHENS_PROTOCOL_WORKERS"   validate:"required"`
+	LogLevel         string    `envconfig:"ATHENS_LOG_LEVEL"          validate:"required"`
+	LogFormat        string    `envconfig:"ATHENS_LOG_FORMAT"         validate:"oneof='' 'json' 'plain'"`
+	CloudRuntime     string    `envconfig:"ATHENS_CLOUD_RUNTIME"      validate:"required_without=LogFormat"`
 	EnablePprof      bool      `envconfig:"ATHENS_ENABLE_PPROF"`
 	PprofPort        string    `envconfig:"ATHENS_PPROF_PORT"`
 	FilterFile       string    `envconfig:"ATHENS_FILTER_FILE"`
 	TraceExporterURL string    `envconfig:"ATHENS_TRACE_EXPORTER_URL"`
 	TraceExporter    string    `envconfig:"ATHENS_TRACE_EXPORTER"`
 	StatsExporter    string    `envconfig:"ATHENS_STATS_EXPORTER"`
-	StorageType      string    `validate:"required" envconfig:"ATHENS_STORAGE_TYPE"`
+	StorageType      string    `envconfig:"ATHENS_STORAGE_TYPE"       validate:"required"`
 	GlobalEndpoint   string    `envconfig:"ATHENS_GLOBAL_ENDPOINT"` // This feature is not yet implemented
 	Port             string    `envconfig:"ATHENS_PORT"`
 	UnixSocket       string    `envconfig:"ATHENS_UNIX_SOCKET"`
 	BasicAuthUser    string    `envconfig:"BASIC_AUTH_USER"`
 	BasicAuthPass    string    `envconfig:"BASIC_AUTH_PASS"`
+	HomeTemplatePath string    `envconfig:"ATHENS_HOME_TEMPLATE_PATH"`
 	ForceSSL         bool      `envconfig:"PROXY_FORCE_SSL"`
 	ValidatorHook    string    `envconfig:"ATHENS_PROXY_VALIDATOR"`
 	PathPrefix       string    `envconfig:"ATHENS_PATH_PREFIX"`
@@ -53,11 +55,11 @@ type Config struct {
 	NoSumPatterns    []string  `envconfig:"ATHENS_GONOSUM_PATTERNS"`
 	DownloadMode     mode.Mode `envconfig:"ATHENS_DOWNLOAD_MODE"`
 	DownloadURL      string    `envconfig:"ATHENS_DOWNLOAD_URL"`
-	NetworkMode      string    `validate:"oneof=strict offline fallback" envconfig:"ATHENS_NETWORK_MODE"`
+	NetworkMode      string    `envconfig:"ATHENS_NETWORK_MODE"       validate:"oneof=strict offline fallback"`
 	SingleFlightType string    `envconfig:"ATHENS_SINGLE_FLIGHT_TYPE"`
 	RobotsFile       string    `envconfig:"ATHENS_ROBOTS_FILE"`
 	IndexType        string    `envconfig:"ATHENS_INDEX_TYPE"`
-	ShutdownTimeout  int       `validate:"min=0" envconfig:"ATHENS_SHUTDOWN_TIMEOUT"`
+	ShutdownTimeout  int       `envconfig:"ATHENS_SHUTDOWN_TIMEOUT"   validate:"min=0"`
 	SingleFlight     *SingleFlight
 	Storage          *Storage
 	Index            *Index
@@ -98,7 +100,6 @@ func (el *EnvList) Add(key, value string) {
 // See the below link for more information:
 // https://github.com/gomods/athens/issues/1404
 func (el *EnvList) Decode(value string) error {
-	const op errors.Op = "envList.Decode"
 	if value == "" {
 		return nil
 	}
@@ -150,11 +151,13 @@ func defaultConfig() *Config {
 		GoGetWorkers:     10,
 		ProtocolWorkers:  30,
 		LogLevel:         "debug",
+		LogFormat:        "plain",
 		CloudRuntime:     "none",
 		EnablePprof:      false,
 		PprofPort:        ":3001",
 		StatsExporter:    "prometheus",
 		TimeoutConf:      TimeoutConf{Timeout: 300},
+		HomeTemplatePath: "/var/lib/athens/home.html",
 		StorageType:      "memory",
 		Port:             ":3000",
 		SingleFlightType: "memory",
@@ -175,8 +178,11 @@ func defaultConfig() *Config {
 				Endpoints:        []string{"127.0.0.1:26379"},
 				MasterName:       "redis-1",
 				SentinelPassword: "sekret",
+				RedisUsername:    "",
+				RedisPassword:    "",
 				LockConfig:       DefaultRedisLockConfig(),
 			},
+			GCP: DefaultGCPConfig(),
 		},
 		Index: &Index{
 			MySQL: &MySQL{

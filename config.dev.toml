@@ -78,6 +78,11 @@ ProtocolWorkers = 30
 # Env override: ATHENS_LOG_LEVEL
 LogLevel = "debug"
 
+# LogFormat determines the format that logs are output in. Defaults to json.
+# It is only used when CloudRuntime is set to none. Values can be "plain" or "json".
+# Env override: ATHENS_LOG_FORMAT
+LogFormat = "plain"
+
 # CloudRuntime is the Cloud Provider on which the Proxy/Registry is running.
 # Currently available options are "GCP", or "none". Defaults to "none"
 # Env override: ATHENS_CLOUD_RUNTIME
@@ -163,6 +168,10 @@ BasicAuthUser = ""
 # Password for basic auth
 # Env override: BASIC_AUTH_PASS
 BasicAuthPass = ""
+
+# A path on disk to a Go HTML template to be used on the homepage
+# Env override: ATHENS_HOME_TEMPLATE_PATH
+HomeTemplatePath = "/var/lib/athens/home.html"
 
 # Set to true to force an SSL redirect
 # Env override: PROXY_FORCE_SSL
@@ -325,7 +334,9 @@ ShutdownTimeout = 60
         # Env override: ATHENS_ETCD_ENDPOINTS
         Endpoints = "localhost:2379,localhost:22379,localhost:32379"
     [SingleFlight.Redis]
-        # Endpoint is the redis endpoint for a SingleFlight lock.
+        # Endpoint is the redis endpoint for a SingleFlight lock. Should be either a host:port
+        # pair or redis url such as:
+        #    redis[s]://user:password@127.0.0.1:6379/0?protocol=3
         # TODO(marwan): enable multiple endpoints for redis clusters.
         # Env override: ATHENS_REDIS_ENDPOINT
         Endpoint = "127.0.0.1:6379"
@@ -358,6 +369,12 @@ ShutdownTimeout = 60
         # Env override: ATHENS_REDIS_SENTINEL_PASSWORD
         SentinelPassword = "sekret"
 
+        # The Redis master authorization parameters
+        # Env override: ATHENS_REDIS_USERNAME
+        RedisUsername = ""
+        # Env override: ATHENS_REDIS_PASSWORD
+        RedisPassword = ""
+
         [SingleFlight.RedisSentinel.LockConfig]
             # TTL for the lock in seconds. Defaults to 900 seconds (15 minutes).
             # Env override: ATHENS_REDIS_LOCK_TTL
@@ -368,6 +385,10 @@ ShutdownTimeout = 60
             # Max retries while acquiring the lock. Defaults to 10.
             # Env override: ATHENS_REDIS_LOCK_MAX_RETRIES
             MaxRetries = 10
+    [SingleFlight.GCP]
+        # Threshold for how long to wait in seconds for an in-progress GCP upload to
+        # be considered to have failed to unlock.
+        StaleThreshold = 120
 [Storage]
     # Only storage backends that are specified in Proxy.StorageType are required here
     [Storage.CDN]
@@ -521,7 +542,15 @@ ShutdownTimeout = 60
 
         # Account Key to use with the storage account
         # Env override: ATHENS_AZURE_ACCOUNT_KEY
-        AccountKey = "MY_AZURE_BLOB_ACCOUNT_KEY"
+        AccountKey = ""
+
+        # Managed Identity Resource Id to use with the storage account
+        # Env override: ATHENS_AZURE_MANAGED_IDENTITY_RESOURCE_ID
+        ManagedIdentityResourceId = ""
+
+        # Storage Resource to use with the storage account
+        # Env override: ATHENS_AZURE_CREDENTIAL_SCOPE
+        CredentialScope = ""
 
         # Name of container in the blob storage
         # Env override: ATHENS_AZURE_CONTAINER_NAME

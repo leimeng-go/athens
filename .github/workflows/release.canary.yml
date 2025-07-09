@@ -1,8 +1,10 @@
-name: Release canary and commit tags
+name: Release canary
+
 on:
   push:
     branches:
       - main
+
 jobs:
   docker-push-main:
     runs-on: ubuntu-latest
@@ -10,10 +12,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
         with:
           platforms: linux/amd64,linux/arm64
 
@@ -28,7 +30,7 @@ jobs:
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Build and push images
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           file: cmd/proxy/Dockerfile
           build-args: VERSION=${{ github.sha }}

@@ -3,7 +3,6 @@ package actions
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gomods/athens/pkg/config"
 	"github.com/gomods/athens/pkg/log"
@@ -11,7 +10,6 @@ import (
 	"github.com/gomods/athens/pkg/module"
 	"github.com/gomods/athens/pkg/observ"
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
 	"go.opencensus.io/plugin/ochttp"
 )
@@ -22,53 +20,41 @@ const Service = "proxy"
 // App is where all routes and middleware for the proxy
 // should be defined. This is the nerve center of your
 // application.
-func App(conf *config.Config) (http.Handler, error) {
-	//环境配置，开发和生产
-	// ENV is used to help switch settings based on where the
-	// application is being run. Default is "development".
-	ENV := conf.GoEnv
-
+func App(logger *log.Logger, conf *config.Config) (http.Handler, error) {
 	if conf.GithubToken != "" {
 		if conf.NETRCPath != "" {
-			fmt.Println("Cannot provide both GithubToken and NETRCPath. Only provide one.")
-			os.Exit(1)
+			return nil, fmt.Errorf("cannot provide both GithubToken and NETRCPath")
 		}
 
-		netrcFromToken(conf.GithubToken)
+		if err := netrcFromToken(conf.GithubToken); err != nil {
+			return nil, fmt.Errorf("creating netrc from token: %w", err)
+		}
 	}
-    // 挂载 .netrc git相关配置
+	// 挂载 .netrc git相关配置
 	// mount .netrc to home dir
 	// to have access to private repos.
-	initializeAuthFile(conf.NETRCPath)
-    
-	//用于指定Mercurial（Hg）的配置文件路径。Mercurial是一种分布式版本控制系统，用于管理代码仓库
+	if err := initializeAuthFile(conf.NETRCPath); err != nil {
+		return nil, fmt.Errorf("initializing auth file from netrc: %w", err)
+	}
+
 	// mount .hgrc to home dir
 	// to have access to private repos.
-	initializeAuthFile(conf.HGRCPath)
-
-	//配置日志级别
-	logLvl, err := logrus.ParseLevel(conf.LogLevel)
-	if err != nil {
-		return nil, err
+	if err := initializeAuthFile(conf.HGRCPath); err != nil {
+		return nil, fmt.Errorf("initializing auth file from hgrc: %w", err)
 	}
-	//构建日志实例,CloudRuntime用于配置日志格式                    
-	lggr := log.New(conf.CloudRuntime, logLvl)
-    //构建路由组
+
 	r := mux.NewRouter()
 	r.Use(
 		//请求ID中间件
 		mw.WithRequestID,
-		//日志中间件，拼接一些字段
-		mw.LogEntryMiddleware(lggr),
+		mw.LogEntryMiddleware(logger),
 		mw.RequestLogger,
 		secure.New(secure.Options{
 			SSLRedirect:     conf.ForceSSL,
 			SSLProxyHeaders: map[string]string{"X-Forwarded-Proto": "https"},
 		}).Handler,
-		mw.ContentType,
-	    
 	)
-    //某些负载均衡器的单个检查路由？
+	//某些负载均衡器的单个检查路由？
 	var subRouter *mux.Router
 	if prefix := conf.PathPrefix; prefix != "" {
 		// certain Ingress Controllers (such as GCP Load Balancer)
@@ -78,7 +64,7 @@ func App(conf *config.Config) (http.Handler, error) {
 		r.HandleFunc("/", healthHandler).Methods(http.MethodGet)
 		subRouter = r.PathPrefix(prefix).Subrouter()
 	}
-    //相关trance跟踪，例如jaeger
+	//相关trance跟踪，例如jaeger
 	// RegisterExporter will register an exporter where we will export our traces to.
 	// The error from the RegisterExporter would be nil if the tracer was specified by
 	// the user and the trace exporter was created successfully.
@@ -89,33 +75,33 @@ func App(conf *config.Config) (http.Handler, error) {
 		conf.TraceExporter,
 		conf.TraceExporterURL,
 		Service,
-		ENV,
+		conf.GoEnv,
 	)
 	if err != nil {
-		lggr.Infof("%s", err)
+		logger.Info(err)
 	} else {
 		defer flushTraces()
 	}
-     //状态监控，例如prometheus
+	//状态监控，例如prometheus
 	// RegisterStatsExporter will register an exporter where we will collect our stats.
 	// The error from the RegisterStatsExporter would be nil if the proper stats exporter
 	// was specified by the user.
 	flushStats, err := observ.RegisterStatsExporter(r, conf.StatsExporter, Service)
 	if err != nil {
-		lggr.Infof("%s", err)
+		logger.Info(err)
 	} else {
 		defer flushStats()
 	}
-    //使用BasicAuth账号密码认证
+	//使用BasicAuth账号密码认证
 	user, pass, ok := conf.BasicAuth()
 	if ok {
 		r.Use(basicAuth(user, pass))
 	}
-    //使用过滤
+	//使用过滤
 	if !conf.FilterOff() {
 		mf, err := module.NewFilter(conf.FilterFile)
 		if err != nil {
-			lggr.Fatal(err)
+			return nil, fmt.Errorf("creating new filter: %w", err)
 		}
 		r.Use(mw.NewFilterMiddleware(mf, conf.GlobalEndpoint))
 	}
@@ -125,31 +111,23 @@ func App(conf *config.Config) (http.Handler, error) {
 			Base: http.DefaultTransport,
 		},
 	}
-    //Hook是重新调用地址吗？
+	//Hook是重新调用地址吗？
 	// Having the hook set means we want to use it
 	if vHook := conf.ValidatorHook; vHook != "" {
 		r.Use(mw.NewValidationMiddleware(client, vHook))
 	}
-    // module storage mongo实现
+	// module storage mongo实现
 	store, err := GetStorage(conf.StorageType, conf.Storage, conf.TimeoutDuration(), client)
 	if err != nil {
-		err = fmt.Errorf("error getting storage configuration: %w", err)
-		return nil, err
+		return nil, fmt.Errorf("getting storage configuration: %w", err)
 	}
-    //subRouter包含原来的
+	//subRouter包含原来的
 	proxyRouter := r
 	if subRouter != nil {
 		proxyRouter = subRouter
 	}
-	//添加相关handler
-	if err := addProxyRoutes(
-		proxyRouter,
-		store,
-		lggr,
-		conf,
-	); err != nil {
-		err = fmt.Errorf("error adding proxy routes: %w", err)
-		return nil, err
+	if err := addProxyRoutes(proxyRouter, store, logger, conf); err != nil {
+		return nil, fmt.Errorf("adding proxy routes: %w", err)
 	}
 
 	h := &ochttp.Handler{
