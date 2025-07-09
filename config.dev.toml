@@ -455,7 +455,7 @@ ShutdownTimeout = 60
     [Storage.Mongo]
         # Full connection string for mongo storage
         # Env override: ATHENS_MONGO_STORAGE_URL
-        URL = "mongodb://127.0.0.1:27017"
+        URL = "mongodb://admin:password123@mongo-rs-1:27017,mongo-rs-2:27017,mongo-rs-3:27017/?authSource=admin&replicaSet=rs0"
 
         # Sets default database name for mongo storage if not set by URL
         # Env override: ATHENS_MONGO_DEFAULT_DATABASE

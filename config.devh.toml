@@ -1,0 +1,549 @@
+# 这是一个包含所有支持属性的示例配置文件
+# 大多数属性可以通过环境变量覆盖，环境变量在此文件中指定
+# 如果配置文件中没有设置，大多数属性也有默认值（在此文件中提到）
+
+# 如果您将此文件放在启动Athens的位置作为"athens.toml"，athens将在启动时使用它。
+# 您也可以使用-config_file命令行参数启动athens来指定配置文件。
+
+# GoBinary 返回要使用的go二进制文件的路径。此值可以是PATH中二进制文件的名称，或完整路径
+# 默认为 "go"
+# 环境变量覆盖: GO_BINARY_PATH
+GoBinary = "go"
+
+# GoEnv 指定要运行的环境类型。
+# 支持的值: 'development' 和 'production'。默认为 "development"
+# 环境变量覆盖: GO_ENV
+GoEnv = "development"
+
+# GoBinaryEnvVars 是您希望直接传递给Athens在后台运行的Go命令的环境变量。
+# Athens主要运行两个Go命令:
+# 1. `go mod download -json <module>@<version>`
+# 2. `go list -m -json <module>@latest`
+# go命令接受多个环境变量，这些变量可以影响上述两个进程，如GONOSUMDB和GOPROXY。
+# 注意athens将NoSumPatterns传递给上述两个命令，
+# 但此配置中GONOSUMDB的存在优先。
+# 虽然您可以在此处传递任何key=value给Go命令，但您可以通过运行`go env`查看可能的环境变量列表。
+# 环境变量覆盖: ATHENS_GO_BINARY_ENV_VARS
+# 
+# 关于使用环境变量覆盖此配置的重要说明:
+#
+# 您必须在ATHENS_GO_BINARY_ENV_VARS中使用分号(;)分隔多个环境变量。
+# 例如: ATHENS_GO_BINARY_ENV_VARS='GOPROXY=proxy.golang.org,direct; GOPRIVATE=github.com/gomods/*'
+# 这里使用分号而不是逗号(,)，因为逗号是某些go环境变量（如GOPROXY和GOPRIVATE）中分隔参数的有效值
+#
+# 注意，如果您使用环境变量，那么您在配置文件中的任何内容都将被覆盖而不是追加/合并。
+# 换句话说，如果配置文件值是 GoBinaryEnvVars = ["GOPROXY=direct"]
+# 而您传递以下环境变量: ATHENS_GO_BINARY_ENV_VARS='GODEBUG=true'
+# 那么Go二进制文件将接收的最终值是["GODEBUG=true"]而不是["GOPROXY=direct", "GODEBUG=true"]
+# 因此，无论您使用配置文件还是环境变量，请确保您在那里有所有需要的值。
+GoBinaryEnvVars = ["GOPROXY=direct"]
+
+# GoGetWorkers 指定可以并发执行go mod download的次数，
+# 这样低性能实例可以更合理地管理go get，不会耗尽磁盘或内存。
+# 一种思考方式是：GoGetWorkers的数量直接对应于您的底层机器可以处理的并行"git克隆"数量。
+# 环境变量覆盖: ATHENS_GOGET_WORKERS
+GoGetWorkers = 10
+
+# GoGetDir 指定Athens在将模块持久化到存储后端之前从VCS获取模块的临时目录。
+# 这在Kubernetes环境中很有用，其中特定路径被挂载到具有更大磁盘资源的目录中。
+# 如果值为空，Athens将使用默认的OS临时目录。
+# 
+# 环境变量覆盖: ATHENS_GOGET_DIR
+GoGetDir = ""
+
+# ProtocolWorkers 指定您可以同时处理所有下载协议路径的并发请求数。
+# 这与GoGetWorkers不同，因为您可以潜在地为下载协议提供30个请求，
+# 但一次只有5个可以从上游存储模块到存储。
+# 环境变量覆盖: ATHENS_PROTOCOL_WORKERS
+ProtocolWorkers = 30
+
+# LogLevel 返回系统对内部日志的暴露程度。默认为debug。
+# 支持所有logrus日志级别 (https://github.com/Sirupsen/logrus#level-logging)
+# 环境变量覆盖: ATHENS_LOG_LEVEL
+LogLevel = "debug"
+
+# LogFormat 确定日志输出的格式。默认为json。
+# 仅当CloudRuntime设置为none时使用。值可以是"plain"或"json"。
+# 环境变量覆盖: ATHENS_LOG_FORMAT
+LogFormat = "plain"
+
+# CloudRuntime 是代理/注册表运行的云提供商。
+# 当前可用选项是"GCP"或"none"。默认为"none"
+# 环境变量覆盖: ATHENS_CLOUD_RUNTIME
+CloudRuntime = "none"
+
+# EnablePprof 指定是否应该暴露pprof端点。
+# 注意，此选项不意味着在服务器上永久激活，
+# 一旦不需要就应该停用。
+EnablePprof = false
+
+# PprofPort 指定如果激活，pprof将暴露的端口。
+PprofPort = ":3001"
+
+# 包含排除过滤器的文件名。
+# 环境变量覆盖: ATHENS_FILTER_FILE
+#
+# 要将Athens指向上游代理以获取模块，
+# 将GlobalEndpoint设置为"https://<url_to_upstream>"
+# 并确保FilterFile设置为完全限定的文件名，
+# 该文件的第一行包含字母`D`（表示"直接访问"）。
+FilterFile = ""
+
+# robots.txt的文件名。
+# 环境变量覆盖: ATHENS_ROBOTS_FILE
+#
+# 为网络爬虫提供/robots.txt。
+# 默认禁止所有爬虫。
+# 内容详情请参见 https://support.google.com/webmasters/answer/6062608
+RobotsFile = "robots.txt"
+
+# Timeout 是外部网络调用的超时时间（秒）
+# 如果存储后端没有指定超时，此值将用作默认值
+# 默认为300
+# 环境变量覆盖: ATHENS_TIMEOUT
+Timeout = 300
+
+# StorageType 设置代理将使用的存储后端类型。
+# 可能的值: memory, disk, mongo, gcp, minio, s3, azureblob, external
+# 默认为memory
+# 环境变量覆盖: ATHENS_STORAGE_TYPE
+StorageType = "memory"
+
+# 证书和密钥，使athens使用https而不是纯文本http。
+# 设置两者以启用。
+# 环境变量覆盖: ATHENS_TLSCERT_FILE, ATHENS_TLSKEY_FILE
+#TLSCertFile = "server.cer"
+#TLSKeyFile = "server.key"
+
+# Port 设置代理监听的端口
+# 环境变量覆盖: ATHENS_PORT 或 PORT
+# PORT必须是数字或以":"为前缀的数字
+Port = ":3000"
+
+# UnixSocket 设置代理监听的Unix域套接字路径。
+# 指定时，此选项优先于TCP端口配置。
+# 默认为空（即仅在TCP端口上监听）
+# 环境变量覆盖: ATHENS_UNIX_SOCKET
+UnixSocket = ""
+
+# 代理缓存未命中时包注册表的端点
+# 注意：目前尚未实现任何注册表
+# 环境变量覆盖: ATHENS_GLOBAL_ENDPOINT
+#
+# 要将Athens指向上游代理以获取模块，
+# 将GlobalEndpoint设置为"https://<url_to_upstream>"
+# 并确保FilterFile设置为完全限定的文件名，
+# 该文件的第一行包含字母`D`（表示"直接访问"）。
+GlobalEndpoint = "http://localhost:3001"
+
+# 基本认证选项
+# ==================
+# 请注意，这是对GO还不支持适当认证这一事实的不良解决方法！
+# 您的基本认证凭据很容易在ATHENS日志以及GO命令日志中泄露。
+# 这将在1.13中解决。
+# 参见 https://github.com/golang/go/issues/30610
+
+# 基本认证的用户名
+# 环境变量覆盖: BASIC_AUTH_USER
+BasicAuthUser = ""
+
+# 基本认证的密码
+# 环境变量覆盖: BASIC_AUTH_PASS
+BasicAuthPass = ""
+
+# 磁盘上用于主页的Go HTML模板路径
+# 环境变量覆盖: ATHENS_HOME_TEMPLATE_PATH
+HomeTemplatePath = "/var/lib/athens/home.html"
+
+# 设置为true以强制SSL重定向
+# 环境变量覆盖: PROXY_FORCE_SSL
+ForceSSL = false
+
+# ValidatorHook 指定用于验证模块的端点
+# 如果留空或未指定则不使用
+# 环境变量覆盖: ATHENS_PROXY_VALIDATOR
+ValidatorHook = ""
+
+# PathPrefix 指定代理是否应该有一个基础路径。
+# 某些代理和服务基于子域区分，而其他基于路径前缀。
+# 环境变量覆盖: ATHENS_PATH_PREFIX
+PathPrefix = ""
+
+# NETRCPath 告诉您.netrc路径最初位于何处。
+# 这样您就可以将.netrc文件挂载到文件系统中的秘密位置，
+# 然后将其移动到~/.netrc。在某些部署中，如Kubernetes，
+# 我们不能直接挂载到~，因为这会清除镜像中已经存在的任何内容
+# （如Go镜像中的.cache目录）。
+# 环境变量覆盖: ATHENS_NETRC_PATH
+NETRCPath = ""
+
+# GithubToken 可以代替NETRCPath来验证代理到您在github上的私有仓库。
+# 这使得用户和GAE等平台更容易只提供Github令牌而不是.netrc文件。
+# 在内部，代理只是为您创建一个.netrc文件。
+# 环境变量覆盖: ATHENS_GITHUB_TOKEN
+GithubToken = ""
+
+# HGRCPath 告诉您.hgrc路径最初位于何处。
+# 这样您就可以将.hgrc文件挂载到文件系统中的秘密位置，
+# 然后将其移动到~/.hgrc。在某些部署中，如Kubernetes，
+# 我们不能直接挂载到~，因为这会清除镜像中已经存在的任何内容
+# （如Go镜像中的.cache目录）。
+# 环境变量覆盖: ATHENS_HGRC_PATH
+HGRCPath = ""
+
+# 跟踪不是Athens的要求。如果基础设施未设置，
+# Athens将继续运行，跟踪不会被导出。
+# TraceExporter 是OpenCensus收集的数据可以导出到的服务。
+# 可能的值: jaeger, datadog, 和 stackdriver。
+# 环境变量覆盖: ATHENS_TRACE_EXPORTER
+TraceExporter = ""
+
+# TraceExporterURL 是Athens填充分布式跟踪信息的URL，如Jaeger。
+# 在Stackdriver中，将其用作GCP ProjectID。
+# 环境变量覆盖: ATHENS_TRACE_EXPORTER_URL
+TraceExporterURL = "http://localhost:14268"
+
+# Stats 不是Athens的要求。如果未设置值，
+# Athens将继续运行，统计信息不会被收集。
+# 可能的值: prometheus。
+# 环境变量覆盖: ATHENS_STATS_EXPORTER
+StatsExporter = "prometheus"
+
+# SumDBs 指定Athens将代理的完全限定URL列表，
+# 以便go命令可以用作校验和验证器。
+# 参见NoSumDB以强制go命令使用GONOSUMDB。
+# 环境变量覆盖: ATHENS_SUM_DBS
+SumDBs = ["https://sum.golang.org"]
+
+# NoSumPatterns 指定模式列表，如果任何这些模式匹配，
+# 将使Sum DB代理返回403。这将强制客户端运行GONOSUMDB
+# 示例模式: NoSumPatterns = ["github.com/mycompany/*"]
+# 环境变量覆盖: ATHENS_GONOSUM_PATTERNS
+NoSumPatterns = []
+
+# DownloadMode 定义当存储中找不到module@version时Athens的行为。
+# 有4个选项:
+# 1. "sync" (默认): 同步下载模块并将结果返回给客户端。
+# 2. "async": 返回404，但异步将模块存储到存储后端。
+# 3. "redirect": 向客户端返回301重定向状态，
+#    基础URL为下面的DownloadRedirectURL。
+# 4. "async_redirect": 与选项3相同，但它将异步将模块存储到后端。
+# 5. "none": 如果找不到模块则返回404，什么都不做。
+# 6. "file:<path>": 将指向指定基于不同导入路径的上述5个选项中任何一个的HCL文件。
+# 7. "custom:<base64-encoded-hcl>" 与选项6相同，
+#    但文件完全编码在选项中。这对于在无服务器部署中使用环境变量很有用。
+# 环境变量覆盖: ATHENS_DOWNLOAD_MODE
+DownloadMode = "sync"
+
+# NetworkMode 配置Athens如何返回/list端点的结果，
+# 因为它可以从自己的存储和上游VCS组装。
+# 
+# 注意，为了更好的错误消息，这也会影响其他端点的行为。
+# 
+# 模式:
+# 1. strict: 将VCS版本与存储版本合并，但如果任一失败则失败。
+# 2. offline: 只获取存储版本，从不联系VCS。
+# 3. fallback: 只返回存储版本，如果VCS失败。注意这意味着您可能
+#    看到不一致的结果，因为fallback模式尽力在请求版本时给您可用的内容。
+NetworkMode = "strict"
+
+# DownloadURL 是如果DownloadMode设置为"redirect"时将使用的URL
+# 环境变量覆盖: ATHENS_DOWNLOAD_URL
+DownloadURL = ""
+
+# SingleFlightType 确定Athens使用什么机制来管理流入Athens后端的并发。
+# 这对于以下场景很重要：如果同时向Athens发出两个并发请求，
+# 都想要同时存储相同的模块，我们希望确保只有第一个请求能够存储模块，
+# 第二个请求将等待第一个完成，这样它就不会覆盖存储。
+
+# 选项是 ["memory", "etcd", "redis", "redis-sentinel", "gcp", "azureblob"]
+
+# 默认选项是"memory"，这意味着只应该使用一个Athens实例。
+# "gcp" single flight 将假设您有"gcp" StorageType，
+# 因此它将使用其强一致性功能来确保即使同时发生并发保存，
+# 也只有一个模块被写入。
+# "azureblob" single flight 将假设您有"azureblob" StorageType，
+# 因此它将使用其强一致性功能来确保即使同时发生并发保存，
+# 也只有一个模块被写入。
+# "redis" single flight 将使用单个redis实例作为更新底层存储的锁定机制
+# "redis-sentinel" single flight 与"redis"类似，但通过redis-sentinel获取redis连接
+# 环境变量覆盖: ATHENS_SINGLE_FLIGHT_TYPE
+SingleFlightType = "memory"
+
+# IndexType 设置Athens将使用的索引后端类型。
+# 可能的值: none, memory, mysql, postgres
+# 默认为none
+# 环境变量覆盖: ATHENS_INDEX_TYPE
+IndexType = "none"
+
+# ShutdownTimeout 设置关闭时开放连接的超时时间（秒）
+# （通过SIGINT或SIGTERM）。超时后仍然开放的连接将被丢弃。
+# 默认为60
+# 环境变量覆盖: ATHENS_SHUTDOWN_TIMEOUT
+ShutdownTimeout = 60
+
+[SingleFlight]
+    [SingleFlight.Etcd]
+        # Endpoints 是逗号分隔的URL，确定所有分布式etcd服务器。
+        # 它默认为我们在docker-compose文件中的内容。默认情况下被忽略，
+        # 因为上面的SingleFlightType字段确定是否使用Etcd。
+        # 环境变量覆盖: ATHENS_ETCD_ENDPOINTS
+        Endpoints = "localhost:2379,localhost:22379,localhost:32379"
+    [SingleFlight.Redis]
+        # Endpoint 是SingleFlight锁的redis端点。应该是host:port对或redis url，如:
+        #    redis[s]://user:password@127.0.0.1:6379/0?protocol=3
+        # TODO(marwan): 为redis集群启用多个端点。
+        # 环境变量覆盖: ATHENS_REDIS_ENDPOINT
+        Endpoint = "127.0.0.1:6379"
+        # Password 是redis SingleFlight锁的密码。
+        # 环境变量覆盖: ATHENS_REDIS_PASSWORD
+        Password = ""
+
+        [SingleFlight.Redis.LockConfig]
+            # 锁的TTL（秒）。默认为900秒（15分钟）。
+            # 环境变量覆盖: ATHENS_REDIS_LOCK_TTL
+            TTL = 900
+            # 获取锁的超时时间（秒）。默认为15秒。
+            # 环境变量覆盖: ATHENS_REDIS_LOCK_TIMEOUT
+            Timeout = 15
+            # 获取锁时的最大重试次数。默认为10。
+            # 环境变量覆盖: ATHENS_REDIS_LOCK_MAX_RETRIES
+            MaxRetries = 10
+
+    [SingleFlight.RedisSentinel]
+        # Endpoints 是redis sentinel端点，用于发现redis master以进行SingleFlight锁。
+        # 环境变量覆盖: ATHENS_REDIS_SENTINEL_ENDPOINTS
+        Endpoints = ["127.0.0.1:26379"]
+        # MasterName 是用于发现SingleFlight锁master的redis sentinel master名称
+        # 环境变量覆盖: ATHENS_REDIS_SENTINEL_MASTER_NAME
+        MasterName = "redis-1"
+        # SentinelPassword 是用于与redis sentinel认证的可选密码
+        # 环境变量覆盖: ATHENS_REDIS_SENTINEL_PASSWORD
+        SentinelPassword = "sekret"
+
+        # Redis master授权参数
+        # 环境变量覆盖: ATHENS_REDIS_USERNAME
+        RedisUsername = ""
+        # 环境变量覆盖: ATHENS_REDIS_PASSWORD
+        RedisPassword = ""
+
+        [SingleFlight.RedisSentinel.LockConfig]
+            # 锁的TTL（秒）。默认为900秒（15分钟）。
+            # 环境变量覆盖: ATHENS_REDIS_LOCK_TTL
+            TTL = 900
+            # 获取锁的超时时间（秒）。默认为15秒。
+            # 环境变量覆盖: ATHENS_REDIS_LOCK_TIMEOUT
+            Timeout = 15
+            # 获取锁时的最大重试次数。默认为10。
+            # 环境变量覆盖: ATHENS_REDIS_LOCK_MAX_RETRIES
+            MaxRetries = 10
+    [SingleFlight.GCP]
+        # 等待进行中的GCP上传被认为失败解锁的阈值（秒）。
+        StaleThreshold = 120
+[Storage]
+    # 只有在此处指定Proxy.StorageType中指定的存储后端
+    [Storage.CDN]
+        # CDN存储的端点
+        # 环境变量覆盖: CDN_ENDPOINT
+        Endpoint = "cdn.example.com"
+
+    [Storage.Disk]
+        # RootPath 是Athens磁盘根文件夹
+        # 环境变量覆盖: ATHENS_DISK_STORAGE_ROOT
+        RootPath = "/path/on/disk"
+
+    [Storage.GCP]
+        # 必需的IAM角色 (https://cloud.google.com/storage/docs/access-control/iam-roles):
+        # - roles/storage.objectCreator
+        # - roles/storage.objectViewer
+        # - roles/storage.legacyBucketReader
+
+        # 用于GCP存储的ProjectID
+        # 环境变量覆盖: GOOGLE_CLOUD_PROJECT
+        ProjectID = "MY_GCP_PROJECT_ID"
+
+        # 用于GCP存储的Bucket
+        # 环境变量覆盖: ATHENS_STORAGE_GCP_BUCKET
+        Bucket = "MY_GCP_BUCKET"
+
+        # JSONKey 是base64编码的服务账户密钥，
+        # 允许Athens在GCP外部运行但仍能访问GCS。
+        # 当依赖默认GCP认证并设置GOOGLE_APPLICATION_CREDENTIALS变量时不需要。
+        # 参见 https://cloud.google.com/docs/authentication/getting-started.
+        #
+        # 环境变量覆盖: ATHENS_STORAGE_GCP_JSON_KEY
+        JSONKey = ""
+
+    [Storage.Minio]
+        # Minio存储的端点
+        # 环境变量覆盖: ATHENS_MINIO_ENDPOINT
+        Endpoint = "127.0.0.1:9001"
+
+        # Minio存储的访问密钥
+        # 环境变量覆盖: ATHENS_MINIO_ACCESS_KEY_ID
+        Key = "minio"
+
+        # Minio存储的密钥
+        # 环境变量覆盖: ATHENS_MINIO_SECRET_ACCESS_KEY
+        Secret = "minio123"
+
+        # 为Minio连接启用SSL
+        # 默认为true
+        # 环境变量覆盖: ATHENS_MINIO_USE_SSL
+        EnableSSL = false
+
+        # 用于存储的Minio Bucket
+        # 默认为gomods
+        # 环境变量覆盖: ATHENS_MINIO_BUCKET_NAME
+        Bucket = "gomods"
+
+        # Minio存储的区域
+        # 环境变量覆盖: ATHENS_MINIO_REGION
+        Region = ""
+
+    [Storage.Mongo]
+        # mongo存储的完整连接字符串
+        # 环境变量覆盖: ATHENS_MONGO_STORAGE_URL
+        URL = "mongodb://127.0.0.1:27017"
+
+        # 如果URL未设置，则为mongo存储设置默认数据库名称
+        # 环境变量覆盖: ATHENS_MONGO_DEFAULT_DATABASE
+        DefaultDBName = "athens"
+
+        # 用于mongo连接的证书路径
+        # 环境变量覆盖: ATHENS_MONGO_CERT_PATH
+        CertPath = ""
+
+        # 允许不安全的SSL / http连接到mongo存储
+        # 仅用于测试或开发
+        # 环境变量覆盖: ATHENS_MONGO_INSECURE
+        Insecure = false
+
+    [Storage.S3]
+        ### S3的认证模型如下，按以下顺序
+        ### 如果指定了AWS_CREDENTIALS_ENDPOINT并返回有效结果，则使用它
+        ### 如果指定了配置变量且有效，则它们返回有效结果，然后使用它
+        ### 否则，它将默认为默认配置，如下所示
+        # 尝试在环境中、共享配置(~/.aws/credentials)和ec2实例角色
+        # 凭据中找到凭据。参见
+        # https://godoc.org/github.com/aws/aws-sdk-go#hdr-Configuring_Credentials
+        # 和
+        # https://godoc.org/github.com/aws/aws-sdk-go/aws/session#hdr-Environment_Variables
+        # 了解将影响aws配置的环境变量。
+        # 设置UseDefaultConfiguration将只使用默认配置。它将在未来版本中弃用
+        # 建议不要使用它。
+
+        # S3存储的区域
+        # 环境变量覆盖: AWS_REGION
+        Region = "MY_AWS_REGION"
+
+        # S3存储的访问密钥
+        # 环境变量覆盖: AWS_ACCESS_KEY_ID
+        Key = "MY_AWS_ACCESS_KEY_ID"
+
+        # S3存储的密钥
+        # 环境变量覆盖: AWS_SECRET_ACCESS_KEY
+        Secret = "MY_AWS_SECRET_ACCESS_KEY"
+
+        # S3存储的会话令牌
+        # 环境变量覆盖: AWS_SESSION_TOKEN
+        Token = ""
+
+        # 用于存储的S3 Bucket
+        # 环境变量覆盖: ATHENS_S3_BUCKET_NAME
+        Bucket = "MY_S3_BUCKET_NAME"
+
+        # 如果为true，则将使用s3端点的路径样式url
+        # 环境变量覆盖: AWS_FORCE_PATH_STYLE
+        ForcePathStyle = false
+
+        # 如果为true，则将使用默认aws配置。这将
+        # 尝试在环境中、共享配置(~/.aws/credentials)和ec2实例角色
+        # 凭据中找到凭据。参见
+        # https://godoc.org/github.com/aws/aws-sdk-go#hdr-Configuring_Credentials
+        # 和
+        # https://godoc.org/github.com/aws/aws-sdk-go/aws/session#hdr-Environment_Variables
+        # 了解将影响aws配置的环境变量。
+        UseDefaultConfiguration = false
+
+        # https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/endpointcreds/
+        CredentialsEndpoint = ""
+
+        # 容器相对url（由fargate使用）/v2/....
+        # 如果存在，它将连接到CredentialsEndpoint
+        # 如果您计划使用AWS Fargate，请使用http://169.254.170.2作为CredentialsEndpoint
+        # 参考: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v2.html
+        AwsContainerCredentialsRelativeURI = ""
+
+        # 覆盖S3存储客户端的默认生成端点的可选端点URL（仅主机名或完全限定的URI）
+        #
+        # 指定端点时，您仍必须提供`Region`值。
+        # 环境变量覆盖: AWS_ENDPOINT
+        Endpoint = ""
+
+   [Storage.AzureBlob]
+        # Azure Blob的存储账户名称
+        # 环境变量覆盖: ATHENS_AZURE_ACCOUNT_NAME
+        AccountName = "MY_AZURE_BLOB_ACCOUNT_NAME"
+
+        # 与存储账户一起使用的账户密钥
+        # 环境变量覆盖: ATHENS_AZURE_ACCOUNT_KEY
+        AccountKey = ""
+
+        # 与存储账户一起使用的托管身份资源ID
+        # 环境变量覆盖: ATHENS_AZURE_MANAGED_IDENTITY_RESOURCE_ID
+        ManagedIdentityResourceId = ""
+
+        # 与存储账户一起使用的存储资源
+        # 环境变量覆盖: ATHENS_AZURE_CREDENTIAL_SCOPE
+        CredentialScope = ""
+
+        # blob存储中容器的名称
+        # 环境变量覆盖: ATHENS_AZURE_CONTAINER_NAME
+        ContainerName = "MY_AZURE_BLOB_CONTAINER_NAME"
+
+   [Storage.External]
+        # URL是Athens将用于与后端存储层交互的外部存储URL。
+        # 参见 https://docs.gomods.io/configuration/storage 了解实现详情。
+        # 环境变量覆盖: ATHENS_EXTERNAL_STORAGE_URL
+        URL = ""
+
+[Index]
+    [Index.MySQL]
+        # MySQL协议
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_PROTOCOL
+        Protocol = "tcp"
+
+        # MySQL主机名
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_HOST
+        Host = "localhost"
+
+        # MySQL端口
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_PORT
+        Port = 3306
+
+        # MySQL用户名
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_USER
+        User = "root"
+
+        # MySQL密码
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_PASSWORD
+        Password = ""
+
+        # MySQL数据库
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_DATABASE
+        Database = "athens"
+
+        # MySQL查询参数
+        # 环境变量覆盖必须采用以下格式:
+        # ATHENS_INDEX_MYSQL_PARAMS="parseTime:true,timeout=90s"
+        # 环境变量覆盖: ATHENS_INDEX_MYSQL_PARAMS
+        [Index.MySQL.Params]
+            parseTime = "true"
+            timeout = "30s"
+    [Index.Postgres]
+        # Postgres主机名
+        # 环境变量覆盖: ATHENS_INDEX_POSTGRES_HOST
+        Host = "localhost"
+
+        # Po
