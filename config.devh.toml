@@ -101,7 +101,7 @@ RobotsFile = "robots.txt"
 # 如果存储后端没有指定超时，此值将用作默认值
 # 默认为300
 # 环境变量覆盖: ATHENS_TIMEOUT
-Timeout = 300
+Timeout = 3000
 
 # StorageType 设置代理将使用的存储后端类型。
 # 可能的值: memory, disk, mongo, gcp, minio, s3, azureblob, external
@@ -225,11 +225,11 @@ NoSumPatterns = []
 # 有4个选项:
 # 1. "sync" (默认): 同步下载模块并将结果返回给客户端。
 # 2. "async": 返回404，但异步将模块存储到存储后端。
-# 3. "redirect": 向客户端返回301重定向状态，
+# 3. "redirect": 向客户端返回301重定向状态，重定向到上游代理或者VCS，客户端直接从上游获取模板
 #    基础URL为下面的DownloadRedirectURL。
 # 4. "async_redirect": 与选项3相同，但它将异步将模块存储到后端。
 # 5. "none": 如果找不到模块则返回404，什么都不做。
-# 6. "file:<path>": 将指向指定基于不同导入路径的上述5个选项中任何一个的HCL文件。
+# 6. "file:<path>": 将指向指定基于不同导入路径的上述5个选项中任何一个的HCL文件，根据不同的module使用不同的策略。
 # 7. "custom:<base64-encoded-hcl>" 与选项6相同，
 #    但文件完全编码在选项中。这对于在无服务器部署中使用环境变量很有用。
 # 环境变量覆盖: ATHENS_DOWNLOAD_MODE

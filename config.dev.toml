@@ -117,7 +117,7 @@ RobotsFile = "robots.txt"
 # This value is used as the default for storage backends if they don't specify timeouts
 # Defaults to 300
 # Env override: ATHENS_TIMEOUT
-Timeout = 300
+Timeout = 3000
 
 # StorageType sets the type of storage backend the proxy will use.
 # Possible values are memory, disk, mongo, gcp, minio, s3, azureblob, external
