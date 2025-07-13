@@ -16,15 +16,15 @@ ARG VERSION="unset" \
 ENV GOARCH=${TARGETARCH} \
     GO111MODULE=on \
     CGO_ENABLED=0 \
-    GOPROXY="https://proxy.golang.org"
+    GOPROXY="https://goproxy.cn,direct"
 
-WORKDIR $GOPATH/src/github.com/gomods/athens
+WORKDIR $GOPATH/src/github.com/leimeng-go/athens
 
 COPY . .
 
 RUN DATE="$(date -u +%Y-%m-%d-%H:%M:%S-%Z)" && \
     go build \
-    -ldflags "-X github.com/gomods/athens/pkg/build.version=$VERSION -X github.com/gomods/athens/pkg/build.buildDate=$DATE -s -w" \
+    -ldflags "-X github.com/leimeng-go/athens/pkg/build.version=$VERSION -X github.com/leimeng-go/athens/pkg/build.buildDate=$DATE -s -w" \
     -o /bin/athens-proxy ./cmd/proxy
 
 FROM alpine:${ALPINE_VERSION}
@@ -35,13 +35,13 @@ ENV GOROOT="/usr/local/go" \
     GO111MODULE=on
 
 COPY --from=builder /bin/athens-proxy /bin/athens-proxy
-COPY --from=builder /go/src/github.com/gomods/athens/config.dev.toml /config/config.toml
+COPY --from=builder /go/src/github.com/leimeng-go/athens/config.dev.toml /config/config.toml
 COPY --from=builder /usr/local/go/bin/go /usr/local/go/bin/go
 COPY --from=builder /usr/local/go/go.env /usr/local/go/go.env
 
 RUN chmod 644 /config/config.toml
 
-# Add tini, see https://github.com/gomods/athens/issues/1155 for details.
+# Add tini, see https://github.com/leimeng-go/athens/issues/1155 for details.
 RUN apk add --update git git-lfs mercurial openssh-client subversion procps fossil tini
 
 # Add git-credential-github-app for native integration with GitHub Apps

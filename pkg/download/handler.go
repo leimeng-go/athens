@@ -5,10 +5,10 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/gomods/athens/pkg/download/mode"
-	"github.com/gomods/athens/pkg/log"
-	"github.com/gomods/athens/pkg/middleware"
 	"github.com/gorilla/mux"
+	"github.com/leimeng-go/athens/pkg/download/mode"
+	"github.com/leimeng-go/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/middleware"
 )
 
 // ProtocolHandler is a function that takes all that it needs to return

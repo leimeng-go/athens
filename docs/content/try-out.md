@@ -24,7 +24,7 @@ $env:GO111MODULE = "on"
 Next, use git and Go to install and run the Athens proxy in a background process.
 
 ```console
-$ git clone https://github.com/gomods/athens
+$ git clone https://github.com/leimeng-go/athens
 $ cd athens/cmd/proxy
 $ go install
 $ proxy &

@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/storage"
 	"github.com/spf13/afero"
 )
 
@@ -58,7 +58,7 @@ func (g *goGetFetcher) Fetch(ctx context.Context, mod, ver string) (*storage.Ver
 	const op errors.Op = "goGetFetcher.Fetch"
 	ctx, span := observ.StartSpan(ctx, op.String())
 	defer span.End()
-    
+
 	//创建临时目录
 	// setup the GOPATH
 	goPathRoot, err := afero.TempDir(g.fs, g.gogetDir, "athens")
@@ -85,7 +85,7 @@ func (g *goGetFetcher) Fetch(ctx context.Context, mod, ver string) (*storage.Ver
 		_ = clearFiles(g.fs, goPathRoot)
 		return nil, errors.E(op, err)
 	}
-    //申明一个storage 
+	//申明一个storage
 	var storageVer storage.Version
 	storageVer.Semver = m.Version
 	info, err := afero.ReadFile(g.fs, m.Info)
@@ -125,7 +125,7 @@ func downloadModule(
 	version string,
 ) (goModule, error) {
 	const op errors.Op = "module.downloadModule"
-    //构建下载的uri
+	//构建下载的uri
 	uri := strings.TrimSuffix(module, "/")
 	fullURI := fmt.Sprintf("%s@%s", uri, version)
 

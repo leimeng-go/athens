@@ -10,7 +10,7 @@ merged faster
 ## Steps
 
 We follow a lightweight list of steps in order to review 
-[pull requests in the Athens project](https://github.com/gomods/athens/pulls)
+[pull requests in the Athens project](https://github.com/leimeng-go/athens/pulls)
 (if you're not familiar with pull requests, see 
 [here](https://help.github.com/articles/about-pull-requests/)).
 

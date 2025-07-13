@@ -2,9 +2,9 @@
 
 ![Athens Banner](./docs/static/banner.png)
 
-[![Build Status](https://github.com/gomods/athens/actions/workflows/ci.yml/badge.svg)](https://github.com/gomods/athens/actions/workflows/ci.yml?query=branch%3Amain)
-[![GoDoc](https://godoc.org/github.com/gomods/athens?status.svg)](https://godoc.org/github.com/gomods/athens)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gomods/athens)](https://goreportcard.com/report/github.com/gomods/athens)
+[![Build Status](https://github.com/leimeng-go/athens/actions/workflows/ci.yml/badge.svg)](https://github.com/leimeng-go/athens/actions/workflows/ci.yml?query=branch%3Amain)
+[![GoDoc](https://godoc.org/github.com/leimeng-go/athens?status.svg)](https://godoc.org/github.com/leimeng-go/athens)
+[![Go Report Card](https://goreportcard.com/badge/github.com/leimeng-go/athens)](https://goreportcard.com/report/github.com/leimeng-go/athens)
 [![codecov](https://codecov.io/gh/gomods/athens/branch/master/graph/badge.svg)](https://codecov.io/gh/gomods/athens)
 [![Docker Pulls](https://img.shields.io/docker/pulls/gomods/athens.svg?maxAge=604800)](https://hub.docker.com/r/gomods/athens/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
@@ -14,7 +14,7 @@ Welcome to the Athens project! Athens is an open source, enterprise ready implem
 
 See our documentation site [https://docs.gomods.io](https://docs.gomods.io) for more details on the project.
 
-**We are looking for people who would like to become core maintainers of this project. Please see [issue #1734](https://github.com/gomods/athens/issues/1734) for more details.**
+**We are looking for people who would like to become core maintainers of this project. Please see [issue #1734](https://github.com/leimeng-go/athens/issues/1734) for more details.**
 
 # Project Status
 
@@ -22,7 +22,7 @@ Development teams at several companies are using Athens in their everyday develo
 
 This means that they are running their own Athens servers, hooking them up to their own storage backends (see [here](https://docs.gomods.io/configuration/storage/) for the list of storage backends that Athens supports), and configuring their local Go development environments to use that Athens server.
 
-We encourage you to [try it out](https://docs.gomods.io/install/), consider using it in your development workflow, and letting us know if you are using it by adding a comment to [this GitHub issue](https://github.com/gomods/athens/issues/1323).
+We encourage you to [try it out](https://docs.gomods.io/install/), consider using it in your development workflow, and letting us know if you are using it by adding a comment to [this GitHub issue](https://github.com/leimeng-go/athens/issues/1323).
 
 # More Details Please!
 
@@ -46,15 +46,15 @@ Speaking of contributing, read on!
 
 If you use Athens for your development workflow, we hope that you'll consider contributing back to the project. Athens is widely used and has plenty of interesting work to do, from technical challenges to technical documentation to release management. We have a wonderful community that we would love you to be a part of. [Absolutely everyone is welcome](https://arschles.com/blog/absolutely-everybody/).
 
-The quickest way to get involved is by [filing issues](https://github.com/gomods/athens/issues/new/choose) if you find bugs or find that you need Athens to do something it doesn't.
+The quickest way to get involved is by [filing issues](https://github.com/leimeng-go/athens/issues/new/choose) if you find bugs or find that you need Athens to do something it doesn't.
 
 If you'd like to help us tackle some of the technical / code challenges and you're familiar with the GitHub contribution process, you'll probably be familiar with our process for contributions. You can optionally find or submit an issue, and then submit a pull request (PR) to fix that issue. See [here](https://docs.gomods.io/contributing/) for more of the project-specific details.
 
 >If you're not familiar with the standard GitHub contribution process, which Athens mostly follows, please see [this section of our documentation](https://docs.gomods.io/contributing/new/) to learn how to contribute. You can also take advantage of [@bketelsen](https://github.com/bketelsen)'s [great video](https://www.youtube.com/watch?v=bgSDcTyysRc) on how to contribute code. The information in these documents and videos will help you not only with this project, but can also help you contribute to many other projects on GitHub.
 
-If you decide to contribute but aren't sure what to work on, we have a well maintained [list of good first issues](https://github.com/gomods/athens/contribute) that you should look at. If you find one that you would like to work on, please post a comment saying "I want to work on this", and then it's all yours to begin working on.
+If you decide to contribute but aren't sure what to work on, we have a well maintained [list of good first issues](https://github.com/leimeng-go/athens/contribute) that you should look at. If you find one that you would like to work on, please post a comment saying "I want to work on this", and then it's all yours to begin working on.
 
->We do recommend that you choose one of the issues on the above list, but you may also consider a different one from our [entire list](https://github.com/gomods/athens/issues). Many of the issues on that list are more complex and challenging.
+>We do recommend that you choose one of the issues on the above list, but you may also consider a different one from our [entire list](https://github.com/leimeng-go/athens/issues). Many of the issues on that list are more complex and challenging.
 
 Before you do start getting involved or contributing, we want to let you know that we follow a general [philosophy](./PHILOSOPHY.md) in how we work together, and we'd really appreciate you getting familiar with it before you start.
 

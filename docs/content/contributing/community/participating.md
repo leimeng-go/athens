@@ -27,9 +27,9 @@ We'll provide all the support we can possibly provide to help you contribute
 in any way you'd like. If you're considering joining us, here are some ideas
 for how you can get involved:
 
-- Comment on an [issue](https://github.com/gomods/athens/issues) that you're
+- Comment on an [issue](https://github.com/leimeng-go/athens/issues) that you're
 interested in
-- Submit a [pull request](https://github.com/gomods/athens/pulls) (PR) to fix
+- Submit a [pull request](https://github.com/leimeng-go/athens/pulls) (PR) to fix
 an issue, or to improve something that doesn't have an issue
 - Review a PR that you're interested in
 - Join us at [office hours](/contributing/community/office-hours/)

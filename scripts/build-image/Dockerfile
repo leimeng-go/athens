@@ -13,4 +13,4 @@ ENV AZCLI_VERSION=v0.3.2
 RUN curl -sLo /usr/local/bin/az https://github.com/carolynvs/az-cli/releases/download/$AZCLI_VERSION/az-linux-amd64 && \
 chmod +x /usr/local/bin/az
 
-WORKDIR /go/src/github.com/gomods/athens
+WORKDIR /go/src/github.com/leimeng-go/athens

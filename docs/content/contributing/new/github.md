@@ -10,9 +10,9 @@ LastModifierEmail: "hello@robloranger.ca"
 ### Using GitHub
 
 We use [GitHub](https://github.com) to host the remote copy of our
-[repository](https://github.com/gomods/athens) and both track our
-[issues](https://github.com/gomods/athens/issues) and manage our
-[pull requests](https://github.com/gomods/athens/pulls). If you haven't signed
+[repository](https://github.com/leimeng-go/athens) and both track our
+[issues](https://github.com/leimeng-go/athens/issues) and manage our
+[pull requests](https://github.com/leimeng-go/athens/pulls). If you haven't signed
 up before, take a minute to go do that now. We'll be right here when you get
 back.
 
@@ -99,8 +99,8 @@ straight the pull request.
 ##### Open a pull request
 
 After you have created a branch on your fork, and made the changes. Please make
-sure all tests still pass, see [DEVELOPMENT.md](https://github.com/gomods/athens/blob/main/CONTRIBUTING.md#verify-your-work) for details. Then after you push all changes
-up to your fork, head over to [Athens](https://github.com/gomods/athens) to open a pull request. Usually,
+sure all tests still pass, see [DEVELOPMENT.md](https://github.com/leimeng-go/athens/blob/main/CONTRIBUTING.md#verify-your-work) for details. Then after you push all changes
+up to your fork, head over to [Athens](https://github.com/leimeng-go/athens) to open a pull request. Usually,
 right after you have pushed a new branch and you visit the original repository,
 GitHub will prompt you to open a new pull request. Otherwise you can do so from
 the `Pull Requests` tab on the repository.

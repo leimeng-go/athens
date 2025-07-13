@@ -56,7 +56,7 @@ Now run the Athens proxy in a background process:
 ```console
 $ mkdir -p $(go env GOPATH)/src/github.com/gomods
 $ cd $(go env GOPATH)/src/github.com/gomods
-$ git clone https://github.com/gomods/athens.git
+$ git clone https://github.com/leimeng-go/athens.git
 $ cd athens
 $ GO111MODULE=on go run ./cmd/proxy -config_file=./config.dev.toml &
 [1] 25243
@@ -67,7 +67,7 @@ INFO[0000] Starting application at 127.0.0.1:3000
 ```console
 $ mkdir "$(go env GOPATH)\src\github.com\gomods"
 $ cd "$(go env GOPATH)\src\github.com\gomods"
-$ git clone https://github.com/gomods/athens.git
+$ git clone https://github.com/leimeng-go/athens.git
 $ cd athens
 $ $env:GO111MODULE = "on"
 $ $env:GOPROXY = "https://proxy.golang.org"
@@ -217,4 +217,4 @@ taskkill /PID typeyourPIDhere /F
 Now that you have seen Athens in Action:
 
 * Learn how to [install a shared team Athens](/install/shared-team-instance) with persistent storage.
-* Explore best practices for running Athens in Production. [Coming Soon/Help Wanted](https://github.com/gomods/athens/issues/531)
+* Explore best practices for running Athens in Production. [Coming Soon/Help Wanted](https://github.com/leimeng-go/athens/issues/531)

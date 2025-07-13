@@ -43,7 +43,7 @@ GoEnv = "development"
 # ATHENS_GO_BINARY_ENV_VARS='GODEBUG=true'
 # Then the final value that the Go binary will receive is ["GODEBUG=true"] and NOT ["GOPROXY=direct", "GODEBUG=true"]
 # Therefore, whether you use the config file or the env var, make sure you have all the values you need there.
-GoBinaryEnvVars = ["GOPROXY=direct"]
+GoBinaryEnvVars = ["GOPROXY=https://goproxy.cn,direct"]
 
 # GoGetWorkers specifies how many times you can concurrently
 # go mod download, this is so that low performance instances
@@ -572,7 +572,7 @@ ShutdownTimeout = 60
 
         # MySQL user name
         # Env override: ATHENS_INDEX_MYSQL_HOST
-        Host = "localhost"
+        Host = "127.0.0.1"
 
         # MySQL user name
         # Env override: ATHENS_INDEX_MYSQL_PORT
@@ -584,7 +584,7 @@ ShutdownTimeout = 60
 
         # MySQL user name
         # Env override: ATHENS_INDEX_MYSQL_PASSWORD
-        Password = ""
+        Password = "181205"
 
         # MySQL database
         # Env override: ATHENS_INDEX_MYSQL_DATABASE

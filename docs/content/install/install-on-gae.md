@@ -33,7 +33,7 @@ $ gsutil mb -l europe-west-4 gs://some-bucket
 First clone the Athens repository
 
 ```console
-$ git clone https://github.com/gomods/athens.git
+$ git clone https://github.com/leimeng-go/athens.git
 ```
 
 There is already a Google Application Engine scaffold set up for you. Copy it into a new file and make changes to the environment variables.

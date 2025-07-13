@@ -19,8 +19,8 @@ builds:
   main: cmd/proxy/main.go
   binary: athens
   ldflags:
-    - -X "github.com/gomods/athens/pkg/build.version={{ .Tag }}"
-    - -X "github.com/gomods/athens/pkg/build.buildDate={{ .Env.DATE }}"
+    - -X "github.com/leimeng-go/athens/pkg/build.version={{ .Tag }}"
+    - -X "github.com/leimeng-go/athens/pkg/build.buildDate={{ .Env.DATE }}"
 
 checksum:
   name_template: 'checksums.txt'

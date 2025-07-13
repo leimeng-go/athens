@@ -47,7 +47,7 @@ Aquí te mostramos algunas formas de involucrarte en el proyecto:
 
 * El [listado completo de pasos (en inglés)](/walkthrough) para configurar, ejecutar y testear el proxy Athens explora el procedimiento en mayor detalle.
 * ¡Participa en nuestra [reunión semanal de desarrollo (en ingles)](/contributing/community/developer-meetings/)! Es un modo ideal de conocer nuevas personas involucradas en el proyecto, preguntar cosas, o simplemente pasar un buen rato. Todo el mundo es bienvenido a unirse y participar.
-* Revisa nuestro listado de [tareas de iniciación](https://github.com/gomods/athens/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
+* Revisa nuestro listado de [tareas de iniciación](https://github.com/leimeng-go/athens/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
 * Únete a nosotros en el canal `#athens` en [Gophers Slack](https://invite.slack.golangbridge.org/)
 
 ---

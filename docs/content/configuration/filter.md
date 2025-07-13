@@ -49,10 +49,10 @@ An example default mode is
 <pre>
 D
 - github.com/manugupt1/athens
-+ github.com/gomods/athens
++ github.com/leimeng-go/athens
 </pre>
 
-In the above example, all the modules are fetched directly from the source. `github.com/manugupt1/athens` is excluded and `github.com/gomods/athens` is stored in the proxy storage.
+In the above example, all the modules are fetched directly from the source. `github.com/manugupt1/athens` is excluded and `github.com/leimeng-go/athens` is stored in the proxy storage.
 
 ### Adding versions to the filter
 
@@ -66,10 +66,10 @@ An example version filter is
 D enterprise.github.com/company
 
 # external dependency approved list
-+ github.com/gomods/athens v0.1,v0.2,v0.4.1
++ github.com/leimeng-go/athens v0.1,v0.2,v0.4.1
 </pre>
 
-In the above example, any module not in the rules will be excluded.  All modules from `enterprise.github.com/company` are fetched directly from the source.  The `github.com/gomods/athens` module will be stored in the proxy storage, but only for version `v0.4.1` and any patch versions under `v0.1` and `v0.2` minor versions.
+In the above example, any module not in the rules will be excluded.  All modules from `enterprise.github.com/company` are fetched directly from the source.  The `github.com/leimeng-go/athens` module will be stored in the proxy storage, but only for version `v0.4.1` and any patch versions under `v0.1` and `v0.2` minor versions.
 
 ### Versions Filter Modifiers
 
@@ -78,7 +78,7 @@ Athens provides advanced filter modifiers to cover cases such as API compatibili
 <pre>
 -
 # external dependency approved list
-+ github.com/gomods/athens <v1.2.3
++ github.com/leimeng-go/athens <v1.2.3
 </pre>
 
 The currently supported modifiers are 

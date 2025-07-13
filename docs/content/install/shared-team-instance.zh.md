@@ -192,4 +192,4 @@ Mode                LastWriteTime         Length Name
 下一步:
 
 * [通过helm在Kubernetes上运行Athens](/install/install-on-kubernetes)
-* 查看Athens在生产环境上的最佳实践. [即将发布](https://github.com/gomods/athens/issues/531)
+* 查看Athens在生产环境上的最佳实践. [即将发布](https://github.com/leimeng-go/athens/issues/531)

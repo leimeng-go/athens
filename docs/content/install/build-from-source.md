@@ -7,20 +7,20 @@ You can do that easily with just few commands:
 
 **Bash**
 ```bash
-git clone https://github.com/gomods/athens
+git clone https://github.com/leimeng-go/athens
 cd athens
 make build-ver VERSION="0.2.0"
 ```
 
 **PowerShell**
 ```PowerShell
-git clone https://github.com/gomods/athens
+git clone https://github.com/leimeng-go/athens
 cd athens
 $env:GO111MODULE="on"
 $env:GOPROXY="https://proxy.golang.org"
 $version = "0.2.0"
 $date = (Get-Date).ToUniversalTime()
-go build -ldflags "-X github.com/gomods/athens/pkg/build.version=$version -X github.com/gomods/athens/pkg/build.buildDate=$date" -o athens ./cmd/proxy
+go build -ldflags "-X github.com/leimeng-go/athens/pkg/build.version=$version -X github.com/leimeng-go/athens/pkg/build.buildDate=$date" -o athens ./cmd/proxy
 ```
 
 This will give you a binary named `athens`. You can print the version and time information by running:

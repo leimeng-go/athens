@@ -16,6 +16,6 @@ RUN apk upgrade --update \
 
 WORKDIR /src
 
-CMD ["hugo", "server", "-s", "/src", "-b", "http://localhost:1313", "--bind", "0.0.0.0"]
+CMD ["hugo", "server", "-s", "/src", "-b", "http://localhost:1313", "--bind", "0.0.0.0", "--port", "1313"]
 
 EXPOSE 1313

@@ -9,9 +9,9 @@ Hi, Gopher! We're glad you're interested in getting into PR triaging. This page 
 
 # TL;DR
 
-We're trying to all work together to make sure all of our [pull requests](https://github.com/gomods/athens/pulls) (PRs) get reviewed and merged efficiently. So, we set up an easy way for anyone to "triage" pull requests on any Monday, Wednesday or Friday. 
+We're trying to all work together to make sure all of our [pull requests](https://github.com/leimeng-go/athens/pulls) (PRs) get reviewed and merged efficiently. So, we set up an easy way for anyone to "triage" pull requests on any Monday, Wednesday or Friday. 
 
-PR triaging means looking at [older PRs](https://github.com/gomods/athens/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-asc) and do either or both of these things, as appropriate:
+PR triaging means looking at [older PRs](https://github.com/leimeng-go/athens/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-asc) and do either or both of these things, as appropriate:
 
 - Prompting reviewers to come back and re-review
 - Prompting submitters to come back and address reviews  
@@ -23,7 +23,7 @@ _Absolutely anyone can do triaging, and this is a great way to get involved with
 
 # Intro
 
-The Athens community all works together to keep up to date on [issues](https://github.com/gomods/athens/issues) and [pull requests](https://github.com/gomods/athens/pulls). For issues, we take some time each week to review issues in the next milestone and others that folks are interested in.
+The Athens community all works together to keep up to date on [issues](https://github.com/leimeng-go/athens/issues) and [pull requests](https://github.com/leimeng-go/athens/pulls). For issues, we take some time each week to review issues in the next milestone and others that folks are interested in.
 
 We try to keep PR reviews moving a little bit faster and more efficiently, so we look at those 3 times a week.
 
@@ -44,7 +44,7 @@ We're getting a person to come check in three times a week to make sure that old
 
 Since we don't have a super huge volume of PRs, we're looking for folks to do the following on a triage day:
 
-- Look at [PRs not updated in the last 3 days](https://github.com/gomods/athens/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-asc)
+- Look at [PRs not updated in the last 3 days](https://github.com/leimeng-go/athens/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-asc)
 - Add a comment to prompt reviewers and the submitter to come back to the PR:
     - If new commits have been added to the PR since 1 or more reviewer has done a review, please prompt those reviewers to come back and re-review
     - If there are still comments pending and the submitter hasn't addressed them, please prompt the submitter to look at the new comments
@@ -59,7 +59,7 @@ Anyone, regardless of background, experience, familiarity with the project, time
 
 If you'd like to do triaging on a particular day, please add your name to the [triaging spreadsheet](https://docs.google.com/spreadsheets/d/1EVUSJc7xm1hXXatzCmp9e8XFsJuW8Uiui5MNkt6ijvw/edit?usp=sharing).
 
-If you haven't done a triage before and would like to get started, please [submit an issue](https://github.com/gomods/athens/issues/new?template=first_triage.md).
+If you haven't done a triage before and would like to get started, please [submit an issue](https://github.com/leimeng-go/athens/issues/new?template=first_triage.md).
 
 If any of this doesn't make sense, please contact us in the `#athens` channel in the [Gophers Slack](https://invite.slack.golangbridge.org/) and we'll clear it up and get you started.
 
@@ -67,4 +67,4 @@ If any of this doesn't make sense, please contact us in the `#athens` channel in
 
 Probably, yes! But we don't know if there are exact criteria on when PRs should be "prompted" and how a bot should do that. Maybe we'll learn those criteria here.
 
-Even still, it's nice to have a human touch as a submitter and reviewer. It matches our [philosophy](https://github.com/gomods/athens/blob/main/PHILOSOPHY.md) very well.
+Even still, it's nice to have a human touch as a submitter and reviewer. It matches our [philosophy](https://github.com/leimeng-go/athens/blob/main/PHILOSOPHY.md) very well.

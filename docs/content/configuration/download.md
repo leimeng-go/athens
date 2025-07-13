@@ -64,7 +64,7 @@ The first two lines describe the _default_ behavior for all modules. This behavi
 
 The rest of the file contains `download` blocks. These override the default behavior for specific groups of modules.
 
-The first block specifies that any module matching `github.com/gomods/*` (such as `github.com/gomods/athens`) will be downloaded from GitHub, stored, and then returned to the user.
+The first block specifies that any module matching `github.com/gomods/*` (such as `github.com/leimeng-go/athens`) will be downloaded from GitHub, stored, and then returned to the user.
 
 The second block specifies that any module matching `golang.org/x/*` (such as `golang.org/x/text`) will always return a HTTP 404 response code. This behavior ensures that Athens will _never_ store or serve any module names starting with `golang.org/x`.
 

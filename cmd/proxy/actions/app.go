@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/log"
-	mw "github.com/gomods/athens/pkg/middleware"
-	"github.com/gomods/athens/pkg/module"
-	"github.com/gomods/athens/pkg/observ"
 	"github.com/gorilla/mux"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/log"
+	mw "github.com/leimeng-go/athens/pkg/middleware"
+	"github.com/leimeng-go/athens/pkg/module"
+	"github.com/leimeng-go/athens/pkg/observ"
 	"github.com/unrolled/secure"
 	"go.opencensus.io/plugin/ochttp"
 )

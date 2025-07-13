@@ -7,20 +7,20 @@ weight: 1
 
 **Bash**
 ```bash
-git clone https://github.com/gomods/athens
+git clone https://github.com/leimeng-go/athens
 cd athens
 make build-ver VERSION="0.2.0"
 ```
 
 **PowerShell**
 ```PowerShell
-git clone https://github.com/gomods/athens
+git clone https://github.com/leimeng-go/athens
 cd athens
 $env:GO111MODULE="on"
 $env:GOPROXY="https://proxy.golang.org"
 $version = "0.2.0"
 $date = (Get-Date).ToUniversalTime()
-go build -ldflags "-X github.com/gomods/athens/pkg/build.version=$version -X github.com/gomods/athens/pkg/build.buildDate=$date" -o athens ./cmd/proxy
+go build -ldflags "-X github.com/leimeng-go/athens/pkg/build.version=$version -X github.com/leimeng-go/athens/pkg/build.buildDate=$date" -o athens ./cmd/proxy
 ```
 
 这将生成一个名为`athens`的二进制文件. 你可以通过下列命令打印版本以及构建时间:

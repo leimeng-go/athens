@@ -45,7 +45,7 @@ Athens 为你运行 [Go 模块](https://github.com/golang/go/wiki/Modules) 提�
 
 - 阅读完整的[指南](/walkthrough)，设置、运行并测试 Athens 代理，进行深入地探索。
 * 加入我们的[开发者周例会](/contributing/community/developer-meetings/)！这是一个很好的方法，与大家见面、提问或者只是旁听。我们欢迎任何人加入并参与。
-* 查看我们的问题列表中的 [good first issues](https://github.com/gomods/athens/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
+* 查看我们的问题列表中的 [good first issues](https://github.com/leimeng-go/athens/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
 * 在 [Gophers Slack](https://invite.slack.golangbridge.org/) 上的 `#athens` 频道中加入我们
 
 ---

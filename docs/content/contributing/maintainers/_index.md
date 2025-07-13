@@ -39,4 +39,4 @@ If maintaining Athens isn't something you can do, we're always looking for peopl
 - Triage issues
 - Provide support
 
-You don't need to do anything other than visit our [GitHub page](https://github.com/gomods/athens) to do all of the above!
+You don't need to do anything other than visit our [GitHub page](https://github.com/leimeng-go/athens) to do all of the above!

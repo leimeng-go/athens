@@ -13,11 +13,11 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/gomods/athens/cmd/proxy/actions"
-	"github.com/gomods/athens/internal/shutdown"
-	"github.com/gomods/athens/pkg/build"
-	"github.com/gomods/athens/pkg/config"
-	athenslog "github.com/gomods/athens/pkg/log"
+	"github.com/leimeng-go/athens/cmd/proxy/actions"
+	"github.com/leimeng-go/athens/internal/shutdown"
+	"github.com/leimeng-go/athens/pkg/build"
+	"github.com/leimeng-go/athens/pkg/config"
+	athenslog "github.com/leimeng-go/athens/pkg/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -41,7 +41,7 @@ func main() {
 	if err != nil {
 		stdlog.Fatalf("Could not parse log level %q: %v", conf.LogLevel, err)
 	}
-
+	// 根据conf.CloudRuntime 和 conf.LogFormat 创建logger，设置日志格式
 	logger := athenslog.New(conf.CloudRuntime, logLvl, conf.LogFormat)
 
 	// Turn standard logger output into logrus Errors.
@@ -51,7 +51,9 @@ func main() {
 			logger.WithError(err).Warn("Could not close logrus writer pipe")
 		}
 	}()
+	// 设置标准日志输出
 	stdlog.SetOutput(logrusErrorWriter)
+	// 设置标准日志输出格式,不使用log的日期和时间，使用logrus的日期和时间
 	stdlog.SetFlags(stdlog.Flags() &^ (stdlog.Ldate | stdlog.Ltime))
 
 	handler, err := actions.App(logger, conf)

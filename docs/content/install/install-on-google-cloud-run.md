@@ -44,7 +44,7 @@ $ gcloud auth configure-docker
 
 You will then need to push a copy of the Athens docker image to your google cloud container registry.
 
-Below is an example using v0.11.0, for the latest version, check out the [latest Athens release](https://github.com/gomods/athens/releases)
+Below is an example using v0.11.0, for the latest version, check out the [latest Athens release](https://github.com/leimeng-go/athens/releases)
 ```console
 $ docker pull gomods/athens:v0.11.0
 
