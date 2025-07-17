@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 // Info implements the (./pkg/storage).Getter interface.

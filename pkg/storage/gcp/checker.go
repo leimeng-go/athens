@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"cloud.google.com/go/storage"
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 	"google.golang.org/api/iterator"
 )
 

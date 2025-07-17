@@ -3,8 +3,8 @@ package download
 import (
 	"net/http"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/paths"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/paths"
 )
 
 func getModuleParams(r *http.Request, op errors.Op) (mod, ver string, err error) {

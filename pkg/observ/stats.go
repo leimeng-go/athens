@@ -8,7 +8,7 @@ import (
 	"contrib.go.opencensus.io/exporter/prometheus"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	datadog "github.com/DataDog/opencensus-go-exporter-datadog"
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/gorilla/mux"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
@@ -36,7 +36,7 @@ func RegisterStatsExporter(r *mux.Router, statsExporter, service string) (func()
 	case "":
 		return nil, errors.E(op, "StatsExporter not specified. Stats won't be collected")
 	default:
-		return nil, errors.E(op, fmt.Sprintf("StatsExporter %s not supported. Please open PR or an issue at github.com/gomods/athens", statsExporter))
+		return nil, errors.E(op, fmt.Sprintf("StatsExporter %s not supported. Please open PR or an issue at github.com/leimeng-go/athens", statsExporter))
 	}
 	if err = registerViews(); err != nil {
 		return nil, errors.E(op, err)

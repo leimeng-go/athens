@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/gomods/athens/pkg/requestid"
+	"github.com/leimeng-go/athens/pkg/requestid"
 	"github.com/google/uuid"
 )
 

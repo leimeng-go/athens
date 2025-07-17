@@ -7,9 +7,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/log"
-	"github.com/gomods/athens/pkg/paths"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/paths"
 	"github.com/gorilla/mux"
 )
 

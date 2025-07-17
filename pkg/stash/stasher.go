@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/index"
-	"github.com/gomods/athens/pkg/log"
-	"github.com/gomods/athens/pkg/module"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/index"
+	"github.com/leimeng-go/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/module"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/storage"
 	"go.opencensus.io/trace"
 	"golang.org/x/sync/singleflight"
 )

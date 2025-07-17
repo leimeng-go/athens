@@ -9,20 +9,20 @@ import (
 	"path"
 	"strings"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/download"
-	"github.com/gomods/athens/pkg/download/addons"
-	"github.com/gomods/athens/pkg/download/mode"
-	"github.com/gomods/athens/pkg/index"
-	"github.com/gomods/athens/pkg/index/mem"
-	"github.com/gomods/athens/pkg/index/mysql"
-	"github.com/gomods/athens/pkg/index/nop"
-	"github.com/gomods/athens/pkg/index/postgres"
-	"github.com/gomods/athens/pkg/log"
-	"github.com/gomods/athens/pkg/module"
-	"github.com/gomods/athens/pkg/stash"
-	"github.com/gomods/athens/pkg/storage"
 	"github.com/gorilla/mux"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/download"
+	"github.com/leimeng-go/athens/pkg/download/addons"
+	"github.com/leimeng-go/athens/pkg/download/mode"
+	"github.com/leimeng-go/athens/pkg/index"
+	"github.com/leimeng-go/athens/pkg/index/mem"
+	"github.com/leimeng-go/athens/pkg/index/mysql"
+	"github.com/leimeng-go/athens/pkg/index/nop"
+	"github.com/leimeng-go/athens/pkg/index/postgres"
+	"github.com/leimeng-go/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/module"
+	"github.com/leimeng-go/athens/pkg/stash"
+	"github.com/leimeng-go/athens/pkg/storage"
 	"github.com/spf13/afero"
 )
 
@@ -38,7 +38,7 @@ func addProxyRoutes(
 	r.HandleFunc("/version", versionHandler)
 	r.HandleFunc("/catalog", catalogHandler(s))
 	r.HandleFunc("/robots.txt", robotsHandler(c))
-   //Go模块的索引
+	//Go模块的索引
 	indexer, err := getIndex(c)
 	if err != nil {
 		return err
@@ -65,30 +65,47 @@ func addProxyRoutes(
 	}
 
 	// Download Protocol:
+	// 下载协议：
 	// the download.Protocol and the stash.Stasher interfaces are composable
+	// download.Protocol 和 stash.Stasher 接口是可以组合的（类似中间件）
 	// in a middleware fashion. Therefore you can separate concerns
+	// 以中间件的方式组合，因此可以分离不同的功能关注点
 	// by the functionality: a download.Protocol that just takes care
+	// 例如：download.Protocol 只负责 go get 相关的功能
 	// of "go getting" things, and another Protocol that just takes care
+	// 另一个 Protocol 只负责请求池（限流）等功能
 	// of "pooling" requests etc.
-
+	//
 	// In our case, we'd like to compose both interfaces in a particular
+	// 在本项目中，我们希望以特定顺序组合这两个接口
 	// order to ensure logical ordering of execution.
-
+	// 以保证执行流程的逻辑性
+	//
 	// Here's the order of an incoming request to the download.Protocol:
-
+	// 以下是请求到达 download.Protocol 时的处理顺序：
+	//
 	// 1. The downloadpool gets hit first, and manages concurrent requests
+	// 1. 首先由 downloadpool（下载池）处理，负责并发请求的管理
 	// 2. The downloadpool passes the request to its parent Protocol: stasher
+	// 2. downloadpool 将请求传递给其父 Protocol：stasher
 	// 3. The stasher Protocol checks storage first, and if storage is empty
+	// 3. stasher Protocol 首先检查本地存储，如果没有数据
 	// it makes a Stash request to the stash.Stasher interface.
-
+	// 则向 stash.Stasher 接口发起 Stash 请求
+	//
 	// Once the stasher picks up an order, here's how the requests go in order:
+	// stasher 接收到请求后，内部的处理顺序如下：
 	// 1. The singleflight picks up the first request and latches duplicate ones.
+	// 1. singleflight 处理第一个请求，并锁定重复的请求（防止重复下载）
 	// 2. The singleflight passes the stash to its parent: stashpool.
+	// 2. singleflight 将 stash 请求传递给其父级：stashpool
 	// 3. The stashpool manages limiting concurrent requests and passes them to stash.
+	// 3. stashpool 管理并发数限制，并将请求传递给 stash
 	// 4. The plain stash.New just takes a request from upstream and saves it into storage.
+	// 4. 最终由 stash.New 执行实际的下载并保存到存储
 	//申明一个文件系统相关接口
 	fs := afero.NewOsFs()
-    //go sumdb校验
+	//go sumdb校验
 	if !c.GoBinaryEnvVars.HasKey("GONOSUMDB") {
 		c.GoBinaryEnvVars.Add("GONOSUMDB", strings.Join(c.NoSumPatterns, ","))
 	}

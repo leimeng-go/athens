@@ -43,7 +43,7 @@ GoEnv = "development"
 # ATHENS_GO_BINARY_ENV_VARS='GODEBUG=true'
 # Then the final value that the Go binary will receive is ["GODEBUG=true"] and NOT ["GOPROXY=direct", "GODEBUG=true"]
 # Therefore, whether you use the config file or the env var, make sure you have all the values you need there.
-GoBinaryEnvVars = ["GOPROXY=https://goproxy.cn,direct"]
+GoBinaryEnvVars = ["GOPROXY=https://goproxy.cn,https://mirrors.aliyun.com/goproxy/,https://goproxy.io"]
 
 # GoGetWorkers specifies how many times you can concurrently
 # go mod download, this is so that low performance instances
@@ -117,13 +117,13 @@ RobotsFile = "robots.txt"
 # This value is used as the default for storage backends if they don't specify timeouts
 # Defaults to 300
 # Env override: ATHENS_TIMEOUT
-Timeout = 3000
+Timeout = 30000
 
 # StorageType sets the type of storage backend the proxy will use.
 # Possible values are memory, disk, mongo, gcp, minio, s3, azureblob, external
 # Defaults to memory
 # Env override: ATHENS_STORAGE_TYPE
-StorageType = "memory"
+StorageType = "mongo"
 
 # Certificate and key to make athens serve using https instead of plain text http.
 # Set both to enable.
@@ -280,7 +280,7 @@ DownloadMode = "sync"
 # 3. fallback: only return storage versions, if VCS fails. Note this means that you may
 # see inconsistent results since fallback mode does a best effort of giving you what's
 # available at the time of requesting versions.
-NetworkMode = "strict"
+NetworkMode = "fallback"
 
 # DownloadURL is the URL that will be used if
 # DownloadMode is set to "redirect"

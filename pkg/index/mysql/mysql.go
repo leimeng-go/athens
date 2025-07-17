@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/index"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/index"
 )
 
 //Mysql 创建go模块的的索引，这个是表格初始化

@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	ht "github.com/gobuffalo/httptest"
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/module"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/module"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -48,7 +48,7 @@ func newTestFilter(filterFile string) (*module.Filter, error) {
 	if err != nil {
 		return nil, err
 	}
-	f.AddRule("github.com/gomods/athens/", nil, module.Direct)
+	f.AddRule("github.com/leimeng-go/athens/", nil, module.Direct)
 	f.AddRule("github.com/athens-artifacts/no-tags", nil, module.Exclude)
 	f.AddRule("github.com/athens-artifacts", nil, module.Include)
 	return f, nil
@@ -77,10 +77,10 @@ func Test_FilterMiddleware(t *testing.T) {
 	r.NoError(err, "app should be successfully created in the test")
 	w := ht.New(app)
 
-	path := "/github.com/gomods/athens/@v/list"
+	path := "/github.com/leimeng-go/athens/@v/list"
 	res := w.JSON(path).Get()
 	r.Equal(http.StatusSeeOther, res.Code)
-	r.Equal(conf.GlobalEndpoint+"/github.com/gomods/athens/@v/list", res.HeaderMap.Get("Location"))
+	r.Equal(conf.GlobalEndpoint+"/github.com/leimeng-go/athens/@v/list", res.HeaderMap.Get("Location"))
 
 	// Excluded, expects a 403
 	res = w.JSON("/github.com/athens-artifacts/no-tags/@v/list").Get()
@@ -142,7 +142,7 @@ func TestHookTestSuite(t *testing.T) {
 func (suite *HookTestsSuite) TestHookOnList() {
 	r := suite.Require()
 	// list path, hook should not be hit
-	suite.w.JSON("/github.com/gomods/athens/@v/list").Get()
+	suite.w.JSON("/github.com/leimeng-go/athens/@v/list").Get()
 	r.False(suite.mock.invoked)
 }
 

@@ -15,20 +15,20 @@ var testCases = []struct {
 	{
 		name:         "sync",
 		file:         &DownloadFile{Mode: Sync},
-		input:        "github.com/gomods/athens",
+		input:        "github.com/leimeng-go/athens",
 		expectedMode: Sync,
 	},
 	{
 		name:         "redirect",
 		file:         &DownloadFile{Mode: Redirect, DownloadURL: "gomods.io"},
-		input:        "github.com/gomods/athens",
+		input:        "github.com/leimeng-go/athens",
 		expectedMode: Redirect,
 		expectedURL:  "gomods.io",
 	},
 	{
 		name:         "redirect with download url suffix",
 		file:         &DownloadFile{Mode: Redirect, DownloadURL: "internal.domain/repository/gonexus"},
-		input:        "github.com/gomods/athens",
+		input:        "github.com/leimeng-go/athens",
 		expectedMode: Redirect,
 		expectedURL:  "internal.domain/repository/gonexus",
 	},
@@ -40,7 +40,7 @@ var testCases = []struct {
 				{Pattern: "github.com/gomods/*", Mode: None},
 			},
 		},
-		input:        "github.com/gomods/athens",
+		input:        "github.com/leimeng-go/athens",
 		expectedMode: None,
 	},
 	{
@@ -51,7 +51,7 @@ var testCases = []struct {
 				{Pattern: "github.com/*", Mode: None},
 			},
 		},
-		input:        "github.com/gomods/athens/pkg/mode",
+		input:        "github.com/leimeng-go/athens/pkg/mode",
 		expectedMode: None,
 	},
 	{
@@ -88,7 +88,7 @@ var testCases = []struct {
 				},
 			},
 		},
-		input:        "github.com/gomods/athens",
+		input:        "github.com/leimeng-go/athens",
 		expectedMode: AsyncRedirect,
 		expectedURL:  "gomods.io",
 	},
@@ -145,7 +145,7 @@ func TestNewFile_err(t *testing.T) {
 	}
 	for _, c := range tc {
 		t.Run(c.name, func(subT *testing.T) {
-			_, err := NewFile(c.mode, "github.com/gomods/athens")
+			_, err := NewFile(c.mode, "github.com/leimeng-go/athens")
 			if err.Error() != c.expected {
 				t.Fatalf("expected error %s from NewFile, got %s", c.expected, err.Error())
 			}

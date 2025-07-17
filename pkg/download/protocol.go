@@ -7,14 +7,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gomods/athens/pkg/download/mode"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/log"
-	"github.com/gomods/athens/pkg/module"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/requestid"
-	"github.com/gomods/athens/pkg/stash"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/download/mode"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/module"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/requestid"
+	"github.com/leimeng-go/athens/pkg/stash"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 // Protocol is the download protocol which mirrors

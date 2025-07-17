@@ -2,7 +2,7 @@
 // The details are set using ldflags.
 //
 // The ldflags can be set manually for testing locally:
-// `go build -ldflags "-X github.com/gomods/athens/pkg/build.version=$(git describe --tags) -X github.com/gomods/athens/pkg/build.buildDate=$(date -u +%Y-%m-%d-%H:%M:%S-%Z)"`
+// `go build -ldflags "-X github.com/leimeng-go/athens/pkg/build.version=$(git describe --tags) -X github.com/leimeng-go/athens/pkg/build.buildDate=$(date -u +%Y-%m-%d-%H:%M:%S-%Z)"`
 package build
 
 import (

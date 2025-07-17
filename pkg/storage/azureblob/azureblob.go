@@ -12,10 +12,10 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-storage-blob-go/azblob"
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 type azureBlobStoreClient struct {
@@ -81,7 +81,7 @@ func newBlobStoreClient(accountURL *url.URL, accountName, accountKey, credScope,
 	return cl, nil
 }
 
-// Storage implements (github.com/gomods/athens/pkg/storage).Saver and
+// Storage implements (github.com/leimeng-go/athens/pkg/storage).Saver and
 // also provides a function to fetch the location of a module.
 type Storage struct {
 	client  *azureBlobStoreClient

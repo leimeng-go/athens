@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gomods/athens/pkg/build"
+	"github.com/leimeng-go/athens/pkg/build"
 )
 
 func versionHandler(w http.ResponseWriter, r *http.Request) {

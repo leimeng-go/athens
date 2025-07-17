@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/storage"
-	"github.com/gomods/athens/pkg/storage/gcp"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/storage/gcp"
 	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
 )

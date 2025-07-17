@@ -3,9 +3,9 @@ package mongo
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/storage"
 	multierror "github.com/hashicorp/go-multierror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

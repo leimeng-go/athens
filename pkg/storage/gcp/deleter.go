@@ -3,9 +3,9 @@ package gcp
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	modupl "github.com/gomods/athens/pkg/storage/module"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	modupl "github.com/leimeng-go/athens/pkg/storage/module"
 )
 
 // Delete implements the (./pkg/storage).Deleter interface and

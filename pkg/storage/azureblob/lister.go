@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 )
 
 // List implements the (./pkg/storage).Lister interface.

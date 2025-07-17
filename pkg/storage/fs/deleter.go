@@ -3,8 +3,8 @@ package fs
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 )
 
 // Delete removes a specific version of a module.

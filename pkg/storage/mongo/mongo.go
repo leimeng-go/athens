@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

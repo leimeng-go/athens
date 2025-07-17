@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	"github.com/gomods/athens/pkg/storage"
-	"github.com/gomods/athens/pkg/storage/gcp"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/storage/gcp"
 )
 
 // WithGCSLock returns a distributed singleflight

@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gomods/athens/pkg/paths"
+	"github.com/leimeng-go/athens/pkg/paths"
 )
 
 func sumdbProxy(url *url.URL, nosumPatterns []string) http.Handler {

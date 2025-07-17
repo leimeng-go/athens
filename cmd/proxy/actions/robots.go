@@ -3,7 +3,7 @@ package actions
 import (
 	"net/http"
 
-	"github.com/gomods/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/config"
 )
 
 // robotsHandler implements GET baseURL/robots.txt.

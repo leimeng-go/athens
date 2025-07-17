@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/fatih/color"
-	"github.com/gomods/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/log"
 	logrus "github.com/sirupsen/logrus"
 )
 

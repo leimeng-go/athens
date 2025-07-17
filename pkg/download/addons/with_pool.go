@@ -3,9 +3,9 @@ package addons
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/download"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/download"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 type withpool struct {

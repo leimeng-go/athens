@@ -6,10 +6,10 @@ import (
 	"io"
 
 	"cloud.google.com/go/storage"
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	pkgstorage "github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	pkgstorage "github.com/leimeng-go/athens/pkg/storage"
 )
 
 // Info implements Getter.

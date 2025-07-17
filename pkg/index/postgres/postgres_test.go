@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/index/compliance"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/index/compliance"
 )
 
 func TestPostgres(t *testing.T) {

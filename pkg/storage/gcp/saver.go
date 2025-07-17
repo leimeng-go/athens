@@ -7,16 +7,16 @@ import (
 	"time"
 
 	"cloud.google.com/go/storage"
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 	googleapi "google.golang.org/api/googleapi"
 )
 
 // Save uploads the module's .mod, .zip and .info files for a given version
 // It expects a context, which can be provided using context.Background
 // from the standard library until context has been threaded down the stack.
-// see issue: https://github.com/gomods/athens/issues/174
+// see issue: https://github.com/leimeng-go/athens/issues/174
 //
 // Uploaded files are publicly accessible in the storage bucket as per
 // an ACL rule.

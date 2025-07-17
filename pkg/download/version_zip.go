@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gomods/athens/pkg/download/mode"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/download/mode"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/log"
 )
 
 // PathVersionZip URL.

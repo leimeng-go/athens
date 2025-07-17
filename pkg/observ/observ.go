@@ -7,7 +7,7 @@ import (
 	"contrib.go.opencensus.io/exporter/jaeger"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	datadog "github.com/DataDog/opencensus-go-exporter-datadog"
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"go.opencensus.io/trace"
 )
 
@@ -26,7 +26,7 @@ func RegisterExporter(traceExporter, url, service, env string) (func(), error) {
 	case "":
 		return nil, errors.E(op, "Exporter not specified. Traces won't be exported")
 	default:
-		return nil, errors.E(op, fmt.Sprintf("Exporter %s not supported. Please open PR or an issue at github.com/gomods/athens", traceExporter))
+		return nil, errors.E(op, fmt.Sprintf("Exporter %s not supported. Please open PR or an issue at github.com/leimeng-go/athens", traceExporter))
 	}
 }
 

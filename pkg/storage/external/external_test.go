@@ -4,8 +4,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gomods/athens/pkg/storage/compliance"
-	"github.com/gomods/athens/pkg/storage/mem"
+	"github.com/leimeng-go/athens/pkg/storage/compliance"
+	"github.com/leimeng-go/athens/pkg/storage/mem"
 )
 
 func TestExternal(t *testing.T) {

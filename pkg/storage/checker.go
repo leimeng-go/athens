@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/errors"
 )
 
 // Checker is the interface that checks if the version of the module exists.

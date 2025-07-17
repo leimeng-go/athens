@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gomods/athens/pkg/index/nop"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/index/nop"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 type stashTest struct {

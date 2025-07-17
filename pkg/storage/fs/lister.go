@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 	"github.com/spf13/afero"
 	"golang.org/x/mod/semver"
 )

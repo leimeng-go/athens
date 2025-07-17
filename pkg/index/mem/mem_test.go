@@ -3,8 +3,8 @@ package mem
 import (
 	"testing"
 
-	"github.com/gomods/athens/pkg/index"
-	"github.com/gomods/athens/pkg/index/compliance"
+	"github.com/leimeng-go/athens/pkg/index"
+	"github.com/leimeng-go/athens/pkg/index/compliance"
 )
 
 func TestMem(t *testing.T) {

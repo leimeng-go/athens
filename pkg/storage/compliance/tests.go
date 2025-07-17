@@ -8,8 +8,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/storage"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,7 +31,7 @@ func RunTests(t *testing.T, b storage.Backend, clearBackend func() error) {
 // returns a KindNotFound error when asking for
 // non existing modules.
 func testNotFound(t *testing.T, b storage.Backend) {
-	mod, ver := "github.com/gomods/athens", "yyy"
+	mod, ver := "github.com/leimeng-go/athens", "yyy"
 	ctx := context.Background()
 
 	err := b.Delete(ctx, mod, ver)
@@ -104,7 +104,7 @@ func testListSuffix(t *testing.T, b storage.Backend) {
 func testList(t *testing.T, b storage.Backend) {
 	ctx := context.Background()
 
-	modname := "github.com/gomods/athens"
+	modname := "github.com/leimeng-go/athens"
 	versions := []string{"v1.1.0", "v1.2.0", "v1.3.0"}
 	for _, version := range versions {
 		mock := getMockModule()
@@ -131,7 +131,7 @@ func testList(t *testing.T, b storage.Backend) {
 // testGet saves and retrieves a module successfully.
 func testGet(t *testing.T, b storage.Backend) {
 	ctx := context.Background()
-	modname := "github.com/gomods/athens"
+	modname := "github.com/leimeng-go/athens"
 	ver := "v1.2.3"
 	mock := getMockModule()
 	zipBts, _ := io.ReadAll(mock.Zip)
@@ -156,7 +156,7 @@ func testGet(t *testing.T, b storage.Backend) {
 
 func testExists(t *testing.T, b storage.Backend) {
 	ctx := context.Background()
-	modname := "github.com/gomods/athens"
+	modname := "github.com/leimeng-go/athens"
 	ver := "v1.2.3"
 	mock := getMockModule()
 	zipBts, _ := io.ReadAll(mock.Zip)
@@ -192,7 +192,7 @@ func testShouldNotExist(t *testing.T, b storage.Backend) {
 // afterwards.
 func testDelete(t *testing.T, b storage.Backend) {
 	ctx := context.Background()
-	modname := "github.com/gomods/athens"
+	modname := "github.com/leimeng-go/athens"
 	version := fmt.Sprintf("%s%d", "delete", rand.Int())
 
 	mock := getMockModule()

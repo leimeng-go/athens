@@ -3,7 +3,7 @@ package module
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 // UpstreamLister retrieves a list of available module versions from upstream

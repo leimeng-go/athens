@@ -3,9 +3,9 @@ package azureblob
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 )
 
 // Exists implements the (./pkg/storage).Checker interface

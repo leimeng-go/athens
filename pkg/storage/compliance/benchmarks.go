@@ -7,7 +7,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/storage"
 	"github.com/stretchr/testify/require"
 )
 

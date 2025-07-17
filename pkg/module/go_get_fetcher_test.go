@@ -8,7 +8,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )

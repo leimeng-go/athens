@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/storage"
-	"github.com/gomods/athens/pkg/storage/mem"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/storage/mem"
 	"golang.org/x/sync/errgroup"
 )
 

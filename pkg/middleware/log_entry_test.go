@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gomods/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/log"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

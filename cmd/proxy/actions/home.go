@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gomods/athens/pkg/config"
-	"github.com/gomods/athens/pkg/log"
+	"github.com/leimeng-go/athens/pkg/config"
+	"github.com/leimeng-go/athens/pkg/log"
 )
 
 const homepage = `<!DOCTYPE html>

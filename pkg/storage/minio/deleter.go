@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
 )
 
 func (s *storageImpl) Delete(ctx context.Context, module, version string) error {

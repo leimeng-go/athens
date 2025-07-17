@@ -5,7 +5,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/gorilla/mux"
 )
 

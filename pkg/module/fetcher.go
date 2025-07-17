@@ -3,7 +3,7 @@ package module
 import (
 	"context"
 
-	"github.com/gomods/athens/pkg/storage"
+	"github.com/leimeng-go/athens/pkg/storage"
 )
 
 // Fetcher fetches module from an upstream source.

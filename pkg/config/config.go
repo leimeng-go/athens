@@ -11,8 +11,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/go-playground/validator/v10"
-	"github.com/gomods/athens/pkg/download/mode"
-	"github.com/gomods/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/download/mode"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -98,7 +98,7 @@ func (el *EnvList) Add(key, value string) {
 //	ATHENS_GO_BINARY_ENV_VARS="GOPRIVATE=*.corp.example.com,rsc.io/private; GOPROXY=direct"
 //
 // See the below link for more information:
-// https://github.com/gomods/athens/issues/1404
+// https://github.com/leimeng-go/athens/issues/1404
 func (el *EnvList) Decode(value string) error {
 	if value == "" {
 		return nil

@@ -5,9 +5,9 @@ import (
 	"context"
 	"io"
 
-	"github.com/gomods/athens/pkg/errors"
-	"github.com/gomods/athens/pkg/observ"
-	moduploader "github.com/gomods/athens/pkg/storage/module"
+	"github.com/leimeng-go/athens/pkg/errors"
+	"github.com/leimeng-go/athens/pkg/observ"
+	moduploader "github.com/leimeng-go/athens/pkg/storage/module"
 )
 
 // Save implements the (./pkg/storage).Saver interface.
