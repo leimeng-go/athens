@@ -128,7 +128,7 @@ func downloadModule(
 	//构建下载的uri
 	uri := strings.TrimSuffix(module, "/")
 	fullURI := fmt.Sprintf("%s@%s", uri, version)
-
+	fmt.Printf("execute command: %s mod download -json %s", goBinaryName, fullURI)
 	cmd := exec.CommandContext(ctx, goBinaryName, "mod", "download", "-json", fullURI)
 	cmd.Env = prepareEnv(gopath, envVars)
 	cmd.Dir = repoRoot

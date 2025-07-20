@@ -40,6 +40,7 @@ func (s *ModuleSuite) TestGoGetFetcherFetch() {
 	// always writes to the filesystem
 	fetcher, err := NewGoGetFetcher(s.goBinaryName, "", s.env, afero.NewOsFs())
 	r.NoError(err)
+	s.T().Log("开始下载")
 	ver, err := fetcher.Fetch(ctx, repoURI, version)
 	r.NoError(err)
 	defer ver.Zip.Close()

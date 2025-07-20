@@ -280,7 +280,7 @@ DownloadMode = "sync"
 # 3. fallback: only return storage versions, if VCS fails. Note this means that you may
 # see inconsistent results since fallback mode does a best effort of giving you what's
 # available at the time of requesting versions.
-NetworkMode = "fallback"
+NetworkMode = "strict"
 
 # DownloadURL is the URL that will be used if
 # DownloadMode is set to "redirect"
@@ -318,7 +318,7 @@ SingleFlightType = "memory"
 # Possible values are none, memory, mysql, postgres
 # Defaults to none
 # Env override: ATHENS_INDEX_TYPE
-IndexType = "none"
+IndexType = "mysql"
 
 # ShutdownTimeout sets the timeout (in seconds) for open connections when shutting down
 # (via SIGINT or SIGTERM). Connections still open after the timeout will be dropped.

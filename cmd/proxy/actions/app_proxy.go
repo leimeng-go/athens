@@ -113,13 +113,14 @@ func addProxyRoutes(
 	if err := c.GoBinaryEnvVars.Validate(); err != nil {
 		return err
 	}
-	// go get请求组件
+	// 通过go mod download -json 下载mod info zip等，存储再临时目录然后返回
 	mf, err := module.NewGoGetFetcher(c.GoBinary, c.GoGetDir, c.GoBinaryEnvVars, fs)
 	if err != nil {
 		return err
 	}
-
+    // go list -m -versions -json 查询仓库的版本列表
 	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs, c.TimeoutDuration())
+	// 包装storage 检查storage 中是否存在该模板
 	checker := storage.WithChecker(s)
 	withSingleFlight, err := getSingleFlight(l, c, s, checker)
 	if err != nil {

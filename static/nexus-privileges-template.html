@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Nexus Repository Manager - 权限管理</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* 头部样式 */
+        header {
+            background-color: #2e3d54;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 15px;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-container {
+            display: flex;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            border-bottom: 3px solid #2e3d54;
+            background-color: #e5e5e5;
+        }
+
+        /* 主内容区样式 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .sidebar-title {
+            padding: 0 20px 10px 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-item {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f0f0f0;
+        }
+
+        /* 内容区样式 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .content-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #2e3d54;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* 搜索和过滤区域 */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+        }
+
+        .search-button {
+            padding: 8px 15px;
+            background-color: #2e3d54;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .filter-dropdown {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        /* 权限列表样式 */
+        .privilege-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .privilege-list th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .privilege-list td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .privilege-list tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .privilege-name {
+            color: #2e3d54;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .privilege-name:hover {
+            text-decoration: underline;
+        }
+
+        .privilege-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .type-application {
+            background-color: #2e3d54;
+            color: white;
+        }
+
+        .type-repository-admin {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .type-repository-view {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .type-repository-content {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .type-script {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .privilege-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .privilege-action {
+            color: #2e3d54;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .privilege-action:hover {
+            text-decoration: underline;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination-item {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #2e3d54;
+        }
+
+        .pagination-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .pagination-item.active {
+            background-color: #2e3d54;
+            color: white;
+            border-color: #2e3d54;
+        }
+
+        .pagination-item.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 按钮样式 */
+        .button {
+            padding: 10px 20px;
+            background-color: #2e3d54;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #3e4d64;
+        }
+
+        .button-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .button-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .button-small {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 4px;
+            width: 60%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-button {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-button:hover {
+            color: #333;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .form-hint {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* 标签页样式 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-right: 10px;
+        }
+
+        .tab:hover, .tab.active {
+            border-bottom: 3px solid #2e3d54;
+            color: #2e3d54;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: #f0f0f0;
+            padding: 15px 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="logo">Nexus Repository Manager</div>
+        <div class="user-info">
+            <span>欢迎, admin</span>
+            <a href="#" class="button" style="text-decoration: none;">登出</a>
+        </div>
+    </header>
+
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-item">浏览</div>
+            <div class="nav-item">搜索</div>
+            <div class="nav-item">上传</div>
+            <div class="nav-item active">管理</div>
+            <div class="nav-item">系统</div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-title">安全</div>
+            <div class="sidebar-item">用户</div>
+            <div class="sidebar-item">角色</div>
+            <div class="sidebar-item active">权限</div>
+            <div class="sidebar-item">LDAP</div>
+            <div class="sidebar-item">匿名访问</div>
+            <div class="sidebar-title">仓库</div>
+            <div class="sidebar-item">仓库</div>
+            <div class="sidebar-item">Blob存储</div>
+            <div class="sidebar-item">清理策略</div>
+            <div class="sidebar-title">系统</div>
+            <div class="sidebar-item">API</div>
+            <div class="sidebar-item">电子邮件服务器</div>
+            <div class="sidebar-item">日志</div>
+        </div>
+
+        <!-- 内容区 -->
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="#">管理</a> &gt; <a href="#">安全</a> &gt; 权限
+            </div>
+
+            <div class="content-header">
+                <div class="content-title">权限</div>
+                <div>
+                    <button class="button" onclick="document.getElementById('createPrivilegeModal').style.display='block'">创建权限</button>
+                </div>
+            </div>
+
+            <!-- 标签页 -->
+            <div class="tabs">
+                <div class="tab active">所有权限</div>
+                <div class="tab">应用程序</div>
+                <div class="tab">仓库管理</div>
+                <div class="tab">仓库视图</div>
+                <div class="tab">仓库内容选择器</div>
+                <div class="tab">脚本</div>
+            </div>
+
+            <!-- 搜索和过滤 -->
+            <div class="filter-bar">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索权限...">
+                    <button class="search-button">搜索</button>
+                </div>
+                <div>
+                    <select class="filter-dropdown">
+                        <option>所有类型</option>
+                        <option>应用程序</option>
+                        <option>仓库管理</option>
+                        <option>仓库视图</option>
+                        <option>仓库内容选择器</option>
+                        <option>脚本</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 权限列表 -->
+            <table class="privilege-list">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>类型</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-all</a>
+                        </td>
+                        <td>所有权限</td>
+                        <td><span class="privilege-type type-application">应用程序</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-healthcheck-read</a>
+                        </td>
+                        <td>健康检查读取权限</td>
+                        <td><span class="privilege-type type-application">应用程序</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-search-read</a>
+                        </td>
+                        <td>搜索读取权限</td>
+                        <td><span class="privilege-type type-application">应用程序</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-repository-admin-maven2-maven-central-*</a>
+                        </td>
+                        <td>Maven Central 仓库管理权限</td>
+                        <td><span class="privilege-type type-repository-admin">仓库管理</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-repository-view-maven2-maven-central-browse</a>
+                        </td>
+                        <td>Maven Central 仓库浏览权限</td>
+                        <td><span class="privilege-type type-repository-view">仓库视图</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-repository-view-maven2-maven-central-read</a>
+                        </td>
+                        <td>Maven Central 仓库读取权限</td>
+                        <td><span class="privilege-type type-repository-view">仓库视图</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-repository-view-npm-npm-registry-*</a>
+                        </td>
+                        <td>NPM Registry 仓库所有权限</td>
+                        <td><span class="privilege-type type-repository-view">仓库视图</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-repository-content-selector-maven2-releases-read</a>
+                        </td>
+                        <td>Maven Releases 内容选择器读取权限</td>
+                        <td><span class="privilege-type type-repository-content">仓库内容选择器</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                            <a href="#" class="privilege-action">编辑</a>
+                            <a href="#" class="privilege-action">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="privilege-name">nx-script-*-*</a>
+                        </td>
+                        <td>所有脚本权限</td>
+                        <td><span class="privilege-type type-script">脚本</span></td>
+                        <td class="privilege-actions">
+                            <a href="#" class="privilege-action">查看</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                <div class="pagination-item disabled">«</div>
+                <div class="pagination-item active">1</div>
+                <div class="pagination-item">2</div>
+                <div class="pagination-item">3</div>
+                <div class="pagination-item">4</div>
+                <div class="pagination-item">5</div>
+                <div class="pagination-item">»</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建权限模态框 -->
+    <div id="createPrivilegeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">创建权限</div>
+                <span class="close-button" onclick="document.getElementById('createPrivilegeModal').style.display='none'">&times;</span>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label class="form-label">权限类型</label>
+                    <select class="form-select">
+                        <option>应用程序</option>
+                        <option>仓库管理</option>
+                        <option selected>仓库视图</option>
+                        <option>仓库内容选择器</option>
+                        <option>脚本</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">格式</label>
+                    <select class="form-select">
+                        <option>maven2</option>
+                        <option>npm</option>
+                        <option>docker</option>
+                        <option>pypi</option>
+                        <option>raw</option>
+                        <option>nuget</option>
+                        <option>rubygems</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">仓库</label>
+                    <select class="form-select">
+                        <option>所有仓库</option>
+                        <option>maven-central</option>
+                        <option>maven-releases</option>
+                        <option>maven-snapshots</option>
+                        <option>npm-registry</option>
+                        <option>docker-hub</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">操作</label>
+                    <select class="form-select">
+                        <option>所有操作</option>
+                        <option>browse</option>
+                        <option>read</option>
+                        <option>edit</option>
+                        <option>add</option>
+                        <option>delete</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">名称</label>
+                    <input type="text" class="form-input" value="nx-repository-view-maven2-maven-releases-read" readonly>
+                    <div class="form-hint">权限名称会根据选择自动生成</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">描述</label>
+                    <input type="text" class="form-input" placeholder="输入权限描述">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="button button-secondary" onclick="document.getElementById('createPrivilegeModal').style.display='none'">取消</button>
+                    <button type="submit" class="button">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        &copy; 2023 Sonatype, Inc. | Nexus Repository Manager 3.42.0-01
+    </footer>
+</body>
+</html>

@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Nexus Repository Manager - 组件详情</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* 头部样式 */
+        header {
+            background-color: #2e3d54;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 15px;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-container {
+            display: flex;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            border-bottom: 3px solid #2e3d54;
+            background-color: #e5e5e5;
+        }
+
+        /* 主内容区样式 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .sidebar-title {
+            padding: 0 20px 10px 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-item {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f0f0f0;
+        }
+
+        /* 内容区样式 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .content-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #2e3d54;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* 组件详情样式 */
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .component-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .component-subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .component-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 标签页样式 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-right: 10px;
+        }
+
+        .tab:hover, .tab.active {
+            border-bottom: 3px solid #2e3d54;
+            color: #2e3d54;
+        }
+
+        /* 信息卡片样式 */
+        .info-card {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        /* 资产列表样式 */
+        .assets-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .assets-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .assets-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .assets-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .asset-name {
+            color: #2e3d54;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .asset-name:hover {
+            text-decoration: underline;
+        }
+
+        .asset-date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .asset-size {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .asset-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .asset-action {
+            color: #2e3d54;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .asset-action:hover {
+            text-decoration: underline;
+        }
+
+        /* 依赖项样式 */
+        .dependency-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .dependency-list th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .dependency-list td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dependency-list tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .dependency-name {
+            color: #2e3d54;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .dependency-name:hover {
+            text-decoration: underline;
+        }
+
+        .dependency-version {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .dependency-scope {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .scope-compile {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .scope-runtime {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .scope-provided {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .scope-test {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        /* 漏洞信息样式 */
+        .vulnerability-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .vulnerability-list th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .vulnerability-list td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .vulnerability-list tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .vulnerability-id {
+            color: #2e3d54;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .vulnerability-id:hover {
+            text-decoration: underline;
+        }
+
+        .severity {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .severity-critical {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        .severity-high {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .severity-medium {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .severity-low {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        /* 按钮样式 */
+        .button {
+            padding: 10px 20px;
+            background-color: #2e3d54;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #3e4d64;
+        }
+
+        .button-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .button-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .button-small {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: #f0f0f0;
+            padding: 15px 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        /* 代码块样式 */
+        .code-block {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        /* 复制按钮 */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 相对定位容器 */
+        .relative-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="logo">Nexus Repository Manager</div>
+        <div class="user-info">
+            <span>欢迎, admin</span>
+            <a href="#" class="button" style="text-decoration: none;">登出</a>
+        </div>
+    </header>
+
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-item active">浏览</div>
+            <div class="nav-item">搜索</div>
+            <div class="nav-item">上传</div>
+            <div class="nav-item">管理</div>
+            <div class="nav-item">系统</div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-title">仓库</div>
+            <div class="sidebar-item">所有仓库</div>
+            <div class="sidebar-item active">maven-central</div>
+            <div class="sidebar-item">maven-releases</div>
+            <div class="sidebar-item">maven-snapshots</div>
+            <div class="sidebar-item">npm-registry</div>
+            <div class="sidebar-item">docker-hub</div>
+            <div class="sidebar-title">格式</div>
+            <div class="sidebar-item">Maven</div>
+            <div class="sidebar-item">npm</div>
+            <div class="sidebar-item">Docker</div>
+            <div class="sidebar-item">PyPI</div>
+            <div class="sidebar-item">Go</div>
+        </div>
+
+        <!-- 内容区 -->
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="#">浏览</a> &gt; <a href="#">maven-central</a> &gt; <a href="#">org.springframework</a> &gt; spring-core
+            </div>
+
+            <!-- 组件头部 -->
+            <div class="component-header">
+                <div>
+                    <div class="component-title">org.springframework:spring-core</div>
+                    <div class="component-subtitle">版本: 5.3.23 | 发布于: 2022-09-15</div>
+                </div>
+                <div class="component-actions">
+                    <button class="button button-secondary">复制坐标</button>
+                    <button class="button">下载</button>
+                </div>
+            </div>
+
+            <!-- 标签页 -->
+            <div class="tabs">
+                <div class="tab active">概览</div>
+                <div class="tab">依赖项</div>
+                <div class="tab">漏洞</div>
+                <div class="tab">使用方法</div>
+            </div>
+
+            <!-- 概览标签页内容 -->
+            <div>
+                <!-- 组件信息 -->
+                <div class="info-card">
+                    <h3>组件信息</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Group ID</div>
+                            <div class="info-value">org.springframework</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Artifact ID</div>
+                            <div class="info-value">spring-core</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">版本</div>
+                            <div class="info-value">5.3.23</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">分类</div>
+                            <div class="info-value">jar</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">发布日期</div>
+                            <div class="info-value">2022-09-15 14:32</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">许可证</div>
+                            <div class="info-value">Apache License 2.0</div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">描述</div>
+                        <div class="info-value">Spring Framework 的核心工具类：用于处理 IoC 容器、AOP、元数据、验证、类型转换等核心功能。</div>
+                    </div>
+                </div>
+
+                <!-- 使用方法 -->
+                <div class="info-card">
+                    <h3>使用方法</h3>
+                    <div class="relative-container">
+                        <div class="info-label">Maven</div>
+                        <div class="code-block">
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+    &lt;version&gt;5.3.23&lt;/version&gt;
+&lt;/dependency&gt;
+                        </div>
+                        <button class="copy-button">复制</button>
+                    </div>
+                    <div class="relative-container">
+                        <div class="info-label">Gradle</div>
+                        <div class="code-block">
+implementation 'org.springframework:spring-core:5.3.23'
+                        </div>
+                        <button class="copy-button">复制</button>
+                    </div>
+                </div>
+
+                <!-- 资产列表 -->
+                <h3>资产</h3>
+                <table class="assets-table">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>路径</th>
+                            <th>大小</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="#" class="asset-name">spring-core-5.3.23.jar</a>
+                            </td>
+                            <td>org/springframework/spring-core/5.3.23/spring-core-5.3.23.jar</td>
+                            <td class="asset-size">1.5 MB</td>
+                            <td class="asset-actions">
+                                <a href="#" class="asset-action">下载</a>
+                                <a href="#" class="asset-action">复制URL</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="asset-name">spring-core-5.3.23.pom</a>
+                            </td>
+                            <td>org/springframework/spring-core/5.3.23/spring-core-5.3.23.pom</td>
+                            <td class="asset-size">12.3 KB</td>
+                            <td class="asset-actions">
+                                <a href="#" class="asset-action">下载</a>
+                                <a href="#" class="asset-action">复制URL</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="asset-name">spring-core-5.3.23-sources.jar</a>
+                            </td>
+                            <td>org/springframework/spring-core/5.3.23/spring-core-5.3.23-sources.jar</td>
+                            <td class="asset-size">1.2 MB</td>
+                            <td class="asset-actions">
+                                <a href="#" class="asset-action">下载</a>
+                                <a href="#" class="asset-action">复制URL</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="asset-name">spring-core-5.3.23-javadoc.jar</a>
+                            </td>
+                            <td>org/springframework/spring-core/5.3.23/spring-core-5.3.23-javadoc.jar</td>
+                            <td class="asset-size">2.3 MB</td>
+                            <td class="asset-actions">
+                                <a href="#" class="asset-action">下载</a>
+                                <a href="#" class="asset-action">复制URL</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 依赖项标签页内容 (默认隐藏) -->
+            <div style="display: none;">
+                <h3>依赖项</h3>
+                <table class="dependency-list">
+                    <thead>
+                        <tr>
+                            <th>组件</th>
+                            <th>版本</th>
+                            <th>范围</th>
+                            <th>可选</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">org.springframework:spring-jcl</a>
+                            </td>
+                            <td class="dependency-version">5.3.23</td>
+                            <td><span class="dependency-scope scope-compile">compile</span></td>
+                            <td>否</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">net.sf.jopt-simple:jopt-simple</a>
+                            </td>
+                            <td class="dependency-version">5.0.4</td>
+                            <td><span class="dependency-scope scope-compile">compile</span></td>
+                            <td>是</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">org.aspectj:aspectjweaver</a>
+                            </td>
+                            <td class="dependency-version">1.9.7</td>
+                            <td><span class="dependency-scope scope-compile">compile</span></td>
+                            <td>是</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">io.netty:netty-buffer</a>
+                            </td>
+                            <td class="dependency-version">4.1.79.Final</td>
+                            <td><span class="dependency-scope scope-compile">compile</span></td>
+                            <td>是</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">io.projectreactor:reactor-core</a>
+                            </td>
+                            <td class="dependency-version">3.4.22</td>
+                            <td><span class="dependency-scope scope-compile">compile</span></td>
+                            <td>是</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">junit:junit</a>
+                            </td>
+                            <td class="dependency-version">4.13.2</td>
+                            <td><span class="dependency-scope scope-test">test</span></td>
+                            <td>否</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="dependency-name">org.mockito:mockito-core</a>
+                            </td>
+                            <td class="dependency-version">4.5.1</td>
+                            <td><span class="dependency-scope scope-test">test</span></td>
+                            <td>否</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 漏洞标签页内容 (默认隐藏) -->
+            <div style="display: none;">
+                <h3>漏洞</h3>
+                <table class="vulnerability-list">
+                    <thead>
+                        <tr>
+                            <th>漏洞ID</th>
+                            <th>严重性</th>
+                            <th>CVSS分数</th>
+                            <th>影响版本</th>
+                            <th>修复版本</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="#" class="vulnerability-id">CVE-2022-22965</a>
+                            </td>
+                            <td><span class="severity severity-critical">严重</span></td>
+                            <td>9.8</td>
+                            <td>5.3.0 - 5.3.17</td>
+                            <td>5.3.18+</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="vulnerability-id">CVE-2022-22950</a>
+                            </td>
+                            <td><span class="severity severity-medium">中等</span></td>
+                            <td>5.3</td>
+                            <td>5.3.0 - 5.3.16</td>
+                            <td>5.3.17+</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#" class="vulnerability-id">CVE-2021-22096</a>
+                            </td>
+                            <td><span class="severity severity-low">低</span></td>
+                            <td>3.7</td>
+                            <td>5.2.0 - 5.2.15</td>
+                            <td>5.2.16+</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: 20px; color: #4caf50; font-weight: bold;">
+                    当前版本 (5.3.23) 没有已知漏洞
+                </div>
+            </div>
+
+            <!-- 使用方法标签页内容 (默认隐藏) -->
+            <div style="display: none;">
+                <h3>使用方法</h3>
+                <div class="info-card">
+                    <h4>Maven 配置</h4>
+                    <div class="relative-container">
+                        <div class="code-block">
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+    &lt;version&gt;5.3.23&lt;/version&gt;
+&lt;/dependency&gt;
+                        </div>
+                        <button class="copy-button">复制</button>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>Gradle 配置</h4>
+                    <div class="relative-container">
+                        <div class="code-block">
+// Gradle Groovy DSL
+implementation 'org.springframework:spring-core:5.3.23'
+
+// Gradle Kotlin DSL
+implementation("org.springframework:spring-core:5.3.23")
+                        </div>
+                        <button class="copy-button">复制</button>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>SBT 配置</h4>
+                    <div class="relative-container">
+                        <div class="code-block">
+// https://mvnrepository.com/artifact/org.springframework/spring-core
+libraryDependencies += "org.springframework" % "spring-core" % "5.3.23"
+                        </div>
+                        <button class="copy-button">复制</button>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>Ivy 配置</h4>
+                    <div class="relative-container">
+                        <div class="code-block">
+&lt;dependency org="org.springframework" name="spring-core" rev="5.3.23"&gt;
+  &lt;artifact name="spring-core" type="jar" /&gt;
+&lt;/dependency&gt;
+                        </div>
+                        <button class="copy-button">复制</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        &copy; 2023 Sonatype, Inc. | Nexus Repository Manager 3.42.0-01
+    </footer>
+</body>
+</html>
