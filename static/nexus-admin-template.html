@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8">
-    <title>Nexus Repository Manager - 仓库管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仓库管理系统</title>
     <style>
         /* 全局样式 */
         body {
@@ -473,26 +474,44 @@
             color: #2e7d32;
             border: 1px solid #c8e6c9;
         }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            .content {
+                margin: 10px;
+            }
+            .nav-container {
+                overflow-x: auto;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- 头部 -->
     <header>
-        <div class="logo">Nexus Repository Manager</div>
+        <div class="logo">Athens Go模块仓库管理系统</div>
         <div class="user-info">
-            <span>欢迎, admin</span>
-            <a href="#" class="button" style="text-decoration: none;">登出</a>
+            <span>欢迎, 管理员</span>
+            <a href="/logout" class="button" style="text-decoration: none;">登出</a>
         </div>
     </header>
 
     <!-- 导航栏 -->
     <nav>
         <div class="nav-container">
-            <div class="nav-item">浏览</div>
-            <div class="nav-item">搜索</div>
-            <div class="nav-item">上传</div>
-            <div class="nav-item active">管理</div>
-            <div class="nav-item">系统</div>
+            <div class="nav-item active" onclick="location.href='/dashboard'">仪表盘</div>
+            <div class="nav-item" onclick="location.href='/repositories'">仓库管理</div>
+            <div class="nav-item" onclick="location.href='/upload'">上传模块</div>
+            <div class="nav-item" onclick="location.href='/download'">下载模块</div>
+            <div class="nav-item" onclick="location.href='/settings'">系统设置</div>
         </div>
     </nav>
 
@@ -500,65 +519,59 @@
     <div class="main-container">
         <!-- 侧边栏 -->
         <div class="sidebar">
-            <div class="sidebar-title">仓库管理</div>
-            <div class="sidebar-item active">仓库列表</div>
-            <div class="sidebar-item">仓库组</div>
-            <div class="sidebar-item">清理策略</div>
-            <div class="sidebar-item">内容选择器</div>
-            <div class="sidebar-title">安全管理</div>
-            <div class="sidebar-item">用户</div>
-            <div class="sidebar-item">角色</div>
-            <div class="sidebar-item">权限</div>
-            <div class="sidebar-item">LDAP</div>
-            <div class="sidebar-title">系统设置</div>
-            <div class="sidebar-item">邮件服务器</div>
-            <div class="sidebar-item">HTTP设置</div>
-            <div class="sidebar-item">日志</div>
+            <div class="sidebar-title">Go模块仓库管理</div>
+            <div class="sidebar-item active" onclick="location.href='/repositories'">所有Go模块仓库</div>
+            <div class="sidebar-item" onclick="location.href='/repositories/public'">公共Go模块</div>
+            <div class="sidebar-item" onclick="location.href='/repositories/private'">私有Go模块</div>
+            
+            <div class="sidebar-title">模块操作</div>
+            <div class="sidebar-item" onclick="location.href='/upload'">上传Go模块</div>
+            <div class="sidebar-item" onclick="location.href='/download'">下载Go模块</div>
+            
+            <div class="sidebar-title">系统监控</div>
+            <div class="sidebar-item" onclick="location.href='/monitor/status'">系统状态</div>
+            <div class="sidebar-item" onclick="location.href='/monitor/logs'">系统日志</div>
         </div>
 
         <!-- 内容区 -->
         <div class="content">
             <div class="breadcrumb">
-                <a href="#">管理</a> &gt; 仓库列表
+                <a href="/dashboard">首页</a> &gt; <a href="/repositories">Go模块仓库管理</a> &gt; 所有Go模块仓库
             </div>
 
             <div class="content-header">
-                <div class="content-title">仓库管理</div>
-                <button class="button">创建仓库</button>
+                <div class="content-title">Go模块仓库管理</div>
+                <button class="button" onclick="showCreateModal()">创建Go模块仓库</button>
             </div>
 
             <!-- 提示信息 -->
             <div class="alert alert-info">
-                仓库是存储组件的容器。您可以创建不同类型的仓库来管理各种格式的组件。
+                欢迎使用Athens仓库管理系统，您可以在此管理所有Go模块仓库。本系统仅支持hosted模式的Go模块仓库。
             </div>
 
             <!-- 标签页 -->
             <div class="tabs">
-                <div class="tab active">所有仓库</div>
-                <div class="tab">Maven</div>
-                <div class="tab">npm</div>
-                <div class="tab">Docker</div>
-                <div class="tab">PyPI</div>
-                <div class="tab">Go</div>
+                <div class="tab active" onclick="location.href='/repositories?tab=all'">所有Go模块仓库</div>
+                <div class="tab" onclick="location.href='/repositories?tab=active'">活跃Go模块仓库</div>
+                <div class="tab" onclick="location.href='/repositories?tab=inactive'">非活跃Go模块仓库</div>
             </div>
 
             <!-- 搜索和过滤 -->
             <div class="filter-bar">
                 <div class="search-box">
-                    <input type="text" class="search-input" placeholder="搜索仓库...">
-                    <button class="search-button">搜索</button>
+                    <input type="text" class="search-input" placeholder="搜索Go模块仓库名称或路径" value="">
+                    <button class="search-button" onclick="searchRepositories()">搜索</button>
                 </div>
                 <div>
-                    <select class="filter-dropdown">
-                        <option>所有类型</option>
-                        <option>代理</option>
-                        <option>托管</option>
-                        <option>组</option>
+                    <select class="filter-dropdown" onchange="filterByType(this.value)">
+                        <option value="all">所有类型</option>
+                        <option value="hosted">托管</option>
                     </select>
-                    <select class="filter-dropdown">
-                        <option>所有状态</option>
-                        <option>在线</option>
-                        <option>离线</option>
+                    <select class="filter-dropdown" onchange="filterByStatus(this.value)">
+                        <option value="all">所有状态</option>
+                        <option value="online">在线</option>
+                        <option value="offline">离线</option>
+                        <option value="warning">警告</option>
                     </select>
                 </div>
             </div>
@@ -578,132 +591,58 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>maven-central</td>
-                            <td>代理</td>
-                            <td>maven2</td>
-                            <td>https://repo1.maven.org/maven2/</td>
-                            <td><span class="status-badge status-online">在线</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>maven-releases</td>
+                            <td>go-company-libs</td>
                             <td>托管</td>
-                            <td>maven2</td>
-                            <td>/repository/maven-releases/</td>
+                            <td>Go模块</td>
+                            <td>/var/athens/hosted/company-libs</td>
                             <td><span class="status-badge status-online">在线</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
+                                    <button class="button button-small" onclick="editRepository('go-company-libs')">编辑</button>
+                                    <button class="button button-small button-secondary" onclick="viewStats('go-company-libs')">统计</button>
+                                    <button class="button button-small button-danger" onclick="deleteRepository('go-company-libs')">删除</button>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td>maven-snapshots</td>
+                            <td>go-internal-modules</td>
                             <td>托管</td>
-                            <td>maven2</td>
-                            <td>/repository/maven-snapshots/</td>
+                            <td>Go模块</td>
+                            <td>/var/athens/hosted/internal</td>
                             <td><span class="status-badge status-online">在线</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
+                                    <button class="button button-small" onclick="editRepository('go-internal-modules')">编辑</button>
+                                    <button class="button button-small button-secondary" onclick="viewStats('go-internal-modules')">统计</button>
+                                    <button class="button button-small button-danger" onclick="deleteRepository('go-internal-modules')">删除</button>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td>maven-public</td>
-                            <td>组</td>
-                            <td>maven2</td>
-                            <td>/repository/maven-public/</td>
-                            <td><span class="status-badge status-online">在线</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>npm-registry</td>
-                            <td>代理</td>
-                            <td>npm</td>
-                            <td>https://registry.npmjs.org/</td>
+                            <td>go-project-x</td>
+                            <td>托管</td>
+                            <td>Go模块</td>
+                            <td>/var/athens/hosted/project-x</td>
                             <td><span class="status-badge status-warning">警告</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
+                                    <button class="button button-small" onclick="editRepository('go-project-x')">编辑</button>
+                                    <button class="button button-small button-secondary" onclick="viewStats('go-project-x')">统计</button>
+                                    <button class="button button-small button-danger" onclick="deleteRepository('go-project-x')">删除</button>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td>npm-hosted</td>
+                            <td>go-experimental</td>
                             <td>托管</td>
-                            <td>npm</td>
-                            <td>/repository/npm-hosted/</td>
-                            <td><span class="status-badge status-online">在线</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>docker-hub</td>
-                            <td>代理</td>
-                            <td>docker</td>
-                            <td>https://registry-1.docker.io</td>
+                            <td>Go模块</td>
+                            <td>/var/athens/hosted/experimental</td>
                             <td><span class="status-badge status-offline">离线</span></td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>docker-hosted</td>
-                            <td>托管</td>
-                            <td>docker</td>
-                            <td>/repository/docker-hosted/</td>
-                            <td><span class="status-badge status-online">在线</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>pypi-org</td>
-                            <td>代理</td>
-                            <td>pypi</td>
-                            <td>https://pypi.org/</td>
-                            <td><span class="status-badge status-online">在线</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>go-proxy</td>
-                            <td>代理</td>
-                            <td>go</td>
-                            <td>https://proxy.golang.org/</td>
-                            <td><span class="status-badge status-online">在线</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="button button-small button-secondary">编辑</button>
-                                    <button class="button button-small button-danger">删除</button>
+                                    <button class="button button-small" onclick="editRepository('go-experimental')">编辑</button>
+                                    <button class="button button-small button-secondary" onclick="viewStats('go-experimental')">统计</button>
+                                    <button class="button button-small button-danger" onclick="deleteRepository('go-experimental')">删除</button>
                                 </div>
                             </td>
                         </tr>
@@ -713,57 +652,103 @@
         </div>
     </div>
 
-    <!-- 模态框 - 创建仓库 (隐藏状态) -->
+    <!-- 模态框 - 创建仓库 -->
     <div class="modal-backdrop" style="display: none;">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">创建仓库</div>
-                <div class="modal-close">×</div>
+                <div class="modal-title">创建新Go模块仓库</div>
+                <div class="modal-close" onclick="hideModal()">×</div>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">仓库名称</label>
-                    <input type="text" class="form-input" placeholder="输入仓库名称">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">仓库类型</label>
-                    <select class="form-select">
-                        <option>代理</option>
-                        <option>托管</option>
-                        <option>组</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">格式</label>
-                    <select class="form-select">
-                        <option>maven2</option>
-                        <option>npm</option>
-                        <option>docker</option>
-                        <option>pypi</option>
-                        <option>go</option>
-                        <option>nuget</option>
-                        <option>raw</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">远程URL (仅代理类型)</label>
-                    <input type="text" class="form-input" placeholder="https://">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">描述</label>
-                    <textarea class="form-textarea" placeholder="仓库描述..."></textarea>
-                </div>
+                <form id="createRepoForm" method="post" action="/api/repositories">
+                    <div class="form-group">
+                        <label class="form-label" for="repo-name">仓库名称</label>
+                        <input type="text" id="repo-name" name="name" class="form-input" placeholder="输入仓库名称" value="" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="repo-type">仓库类型</label>
+                        <select id="repo-type" name="type" class="form-select" required>
+                            <option value="hosted">托管</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="repo-url">存储路径</label>
+                        <input type="text" id="repo-url" name="url" class="form-input" placeholder="输入Go模块存储路径" value="" required>
+                        <div class="form-help">输入Go模块的存储路径</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="repo-desc">描述</label>
+                        <textarea id="repo-desc" name="description" class="form-textarea" placeholder="输入仓库描述"></textarea>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button class="button button-secondary">取消</button>
-                <button class="button">创建</button>
+                <button class="button button-secondary" onclick="hideModal()">取消</button>
+                <button class="button" onclick="submitCreateForm()">创建</button>
             </div>
         </div>
     </div>
 
     <!-- 页脚 -->
     <footer>
-        &copy; 2023 Sonatype, Inc. | Nexus Repository Manager 3.42.0-01
+        &copy; 2023 Athens项目 | Athens Go模块仓库管理系统 v1.0.0
     </footer>
+
+    <script>
+        // 显示创建仓库模态框
+        function showCreateModal() {
+            document.querySelector('.modal-backdrop').style.display = 'flex';
+        }
+        
+        // 隐藏模态框
+        function hideModal() {
+            document.querySelector('.modal-backdrop').style.display = 'none';
+        }
+        
+        // 提交创建表单
+        function submitCreateForm() {
+            // 这里可以添加表单验证逻辑
+            document.getElementById('createRepoForm').submit();
+        }
+        
+        // 编辑仓库
+        function editRepository(repoName) {
+            alert('编辑Go模块仓库: ' + repoName);
+            // 实际应用中应该跳转到编辑页面或打开编辑模态框
+        }
+        
+        // 查看统计
+        function viewStats(repoName) {
+            alert('查看Go模块仓库统计: ' + repoName);
+            // 实际应用中应该跳转到统计页面
+        }
+        
+        // 删除仓库
+        function deleteRepository(repoName) {
+            if (confirm('确定要删除Go模块仓库 ' + repoName + ' 吗？')) {
+                alert('删除Go模块仓库: ' + repoName);
+                // 实际应用中应该发送删除请求
+            }
+        }
+        
+        // 搜索仓库
+        function searchRepositories() {
+            const query = document.querySelector('.search-input').value;
+            alert('搜索Go模块仓库: ' + query);
+            // 实际应用中应该发送搜索请求
+        }
+        
+        // 按类型过滤
+        function filterByType(type) {
+            alert('按类型过滤Go模块仓库: ' + type);
+            // 实际应用中应该发送过滤请求
+        }
+        
+        // 按状态过滤
+        function filterByStatus(status) {
+            alert('按状态过滤: ' + status);
+            // 实际应用中应该发送过滤请求
+        }
+    </script>
 </body>
 </html>

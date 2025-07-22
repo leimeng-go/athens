@@ -24,6 +24,7 @@ import (
 	"github.com/leimeng-go/athens/pkg/stash"
 	"github.com/leimeng-go/athens/pkg/storage"
 	"github.com/spf13/afero"
+	"github.com/leimeng-go/athens/pkg/admin"
 )
 
 func addProxyRoutes(
@@ -38,6 +39,7 @@ func addProxyRoutes(
 	r.HandleFunc("/version", versionHandler)
 	r.HandleFunc("/catalog", catalogHandler(s))
 	r.HandleFunc("/robots.txt", robotsHandler(c))
+	
 	//Go模块的索引
 	indexer, err := getIndex(c)
 	if err != nil {
@@ -146,6 +148,8 @@ func addProxyRoutes(
 	handlerOpts := &download.HandlerOpts{Protocol: dp, Logger: l, DownloadFile: df}
 	//注册下载依赖相关路由
 	download.RegisterHandlers(r, handlerOpts)
+    //admin 相关路由
+    admin.RegisterHandlers(r)
 
 	return nil
 }

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Athens Go模块仓库 - 上传模块</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* 头部样式 */
+        header {
+            background-color: #2e3d54;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info span {
+            margin-right: 15px;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nav-container {
+            display: flex;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            border-bottom: 3px solid #2e3d54;
+            background-color: #e5e5e5;
+        }
+
+        /* 主内容区样式 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .sidebar-title {
+            padding: 0 20px 10px 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-item {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #f0f0f0;
+        }
+
+        /* 内容区样式 */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .content-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #2e3d54;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* 表单样式 */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            box-sizing: border-box;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-help {
+            margin-top: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 文件上传区域样式 */
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #2e3d54;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .upload-button {
+            padding: 10px 20px;
+            background-color: #2e3d54;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .upload-button:hover {
+            background-color: #3e4d64;
+        }
+
+        .upload-file-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .upload-file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .upload-file-name {
+            flex: 1;
+        }
+
+        .upload-file-size {
+            color: #666;
+            margin-right: 15px;
+        }
+
+        .upload-file-remove {
+            color: #e53935;
+            cursor: pointer;
+        }
+
+        /* 按钮样式 */
+        .button {
+            padding: 10px 20px;
+            background-color: #2e3d54;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #3e4d64;
+        }
+
+        .button-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .button-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .button-group .button {
+            margin-left: 10px;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: #f0f0f0;
+            padding: 15px 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        /* 提示信息样式 */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .alert-info {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            border: 1px solid #bbdefb;
+        }
+
+        .alert-warning {
+            background-color: #fff8e1;
+            color: #ff8f00;
+            border: 1px solid #ffe082;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="logo">Athens Go模块仓库管理系统</div>
+        <div class="user-info">
+            <span>欢迎, 管理员</span>
+            <a href="/logout" class="button" style="text-decoration: none;">登出</a>
+        </div>
+    </header>
+
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-item" onclick="location.href='/dashboard'">仪表盘</div>
+            <div class="nav-item" onclick="location.href='/repositories'">仓库管理</div>
+            <div class="nav-item active" onclick="location.href='/upload'">上传模块</div>
+            <div class="nav-item" onclick="location.href='/download'">下载模块</div>
+            <div class="nav-item" onclick="location.href='/settings'">系统设置</div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-title">Go模块仓库管理</div>
+            <div class="sidebar-item" onclick="location.href='/repositories'">所有Go模块仓库</div>
+            <div class="sidebar-item" onclick="location.href='/repositories/public'">公共Go模块</div>
+            <div class="sidebar-item" onclick="location.href='/repositories/private'">私有Go模块</div>
+            
+            <div class="sidebar-title">模块操作</div>
+            <div class="sidebar-item active" onclick="location.href='/upload'">上传Go模块</div>
+            <div class="sidebar-item" onclick="location.href='/download'">下载Go模块</div>
+            
+            <div class="sidebar-title">最近上传</div>
+            <div class="sidebar-item">github.com/example/module@v1.0.0</div>
+            <div class="sidebar-item">github.com/user/project@v0.5.2</div>
+            <div class="sidebar-item">example.com/pkg/tool@v2.1.0</div>
+        </div>
+
+        <!-- 内容区 -->
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="/dashboard">首页</a> &gt; <a href="/upload">上传模块</a> &gt; Go模块上传
+            </div>
+
+            <div class="content-header">
+                <div class="content-title">上传Go模块</div>
+            </div>
+
+            <!-- 提示信息 -->
+            <div class="alert alert-info">
+                上传Go模块到Athens仓库。请确保您有足够的权限上传到目标仓库。上传的模块将以hosted模式存储。
+            </div>
+
+            <!-- 表单部分 -->
+            <div class="form-section">
+                <div class="form-title">模块信息</div>
+                
+                <div class="form-group">
+                    <label class="form-label">目标仓库</label>
+                    <select class="form-select">
+                        <option>go-company-libs</option>
+                        <option>go-internal-modules</option>
+                        <option>go-project-x</option>
+                        <option>go-experimental</option>
+                    </select>
+                    <div class="form-help">选择要上传模块的目标仓库</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">模块路径</label>
+                    <input type="text" class="form-input" placeholder="例如: github.com/example/module">
+                    <div class="form-help">Go模块的完整导入路径</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">版本</label>
+                    <input type="text" class="form-input" placeholder="例如: v1.0.0">
+                    <div class="form-help">Go模块的语义化版本号</div>
+                </div>
+            </div>
+
+            <!-- 文件上传部分 -->
+            <div class="form-section">
+                <div class="form-title">上传文件</div>
+                
+                <div class="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">拖放模块ZIP文件到此处或点击下方按钮选择文件</div>
+                    <button class="upload-button">选择文件</button>
+                </div>
+                
+                <div class="upload-file-list">
+                    <div class="upload-file-item">
+                        <div class="upload-file-name">module-v1.0.0.zip</div>
+                        <div class="upload-file-size">2.3 MB</div>
+                        <div class="upload-file-remove">删除</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 附加信息部分 -->
+            <div class="form-section">
+                <div class="form-title">附加信息</div>
+                
+                <div class="form-group">
+                    <label class="form-label">描述</label>
+                    <textarea class="form-textarea" placeholder="模块描述..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">标签</label>
+                    <input type="text" class="form-input" placeholder="用逗号分隔多个标签">
+                    <div class="form-help">添加标签以便于搜索和分类</div>
+                </div>
+            </div>
+
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <button class="button button-secondary" onclick="location.href='/repositories'">取消</button>
+                <button class="button" onclick="uploadModule()">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        &copy; 2023 Athens项目 | Athens Go模块仓库管理系统 v1.0.0
+    </footer>
+
+    <script>
+        // 上传模块
+        function uploadModule() {
+            alert('模块上传功能将在此实现');
+            // 实际应用中应该发送上传请求
+        }
+    </script>
+</body>
+</html>
