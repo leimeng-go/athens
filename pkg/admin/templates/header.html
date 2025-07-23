@@ -1,0 +1,14 @@
+{{/* 头部组件模板 - header.html */}}
+{{define "header"}}
+<header>
+    <div class="logo">
+        <a href="/admin/dashboard" style="color: white; text-decoration: none;">
+            Athens 仓库管理系统
+        </a>
+    </div>
+    <div class="user-info">
+        <span>欢迎，{{.Username}}</span>
+        <a href="/logout" style="color: white; text-decoration: none; margin-left: 15px;">退出</a>
+    </div>
+</header>
+{{end}}

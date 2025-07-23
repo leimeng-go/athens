@@ -1,0 +1,47 @@
+{{/* 侧边栏组件模板 - sidebar.html */}}
+{{define "sidebar"}}
+<aside class="sidebar">
+    <div class="sidebar-title">快速操作</div>
+    <a href="/admin/dashboard" class="sidebar-item">仪表盘</a>
+    <a href="/admin/repositories" class="sidebar-item">仓库管理</a>
+    <a href="/admin/upload" class="sidebar-item">上传模块</a>
+    <a href="/admin/download" class="sidebar-item">下载模块</a>
+    
+    <div class="sidebar-title">系统管理</div>
+    <a href="/admin/logs" class="sidebar-item">系统日志</a>
+    <a href="/admin/settings" class="sidebar-item">系统设置</a>
+</aside>
+
+<style>
+.sidebar {
+    width: 250px;
+    background-color: white;
+    border-right: 1px solid #ddd;
+    padding: 20px 0;
+}
+
+.sidebar-title {
+    padding: 0 20px 10px 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.sidebar-title:first-child {
+    margin-top: 0;
+}
+
+.sidebar-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+    background-color: #f0f0f0;
+}
+</style>
+{{end}}

@@ -1,0 +1,86 @@
+{{/* 重构后的仪表盘模板 - dashboard_refactored.html */}}
+{{define "dashboard_refactored"}}
+{{template "layout" .}}
+
+{{/* 自定义页面标题 */}}
+{{define "title"}}{{.Title}} - 仪表盘{{end}}
+
+{{/* 包含仪表盘特定样式 */}}
+{{define "page-styles"}}
+{{template "dashboard-styles" .}}
+{{end}}
+
+{{/* 包含侧边栏 */}}
+{{define "sidebar"}}
+{{template "sidebar" .}}
+{{end}}
+
+{{/* 主要内容区域 */}}
+{{define "content"}}
+<div class="content-header">
+    <div class="content-title">仪表盘</div>
+    <div class="breadcrumb">
+        <a href="/admin/dashboard">首页</a> &gt; 仪表盘
+    </div>
+</div>
+
+<!-- 统计卡片 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>总模块数</h3>
+        <div class="stat-value">{{.Stats.TotalModules}}</div>
+        <div class="stat-change positive">+{{.Stats.NewModulesToday}} 今日新增</div>
+    </div>
+    <div class="stat-card">
+        <h3>活跃仓库</h3>
+        <div class="stat-value">{{.Stats.ActiveRepositories}}</div>
+        <div class="stat-change positive">{{.Stats.RepositoryUptime}}% 可用性</div>
+    </div>
+    <div class="stat-card">
+        <h3>今日下载</h3>
+        <div class="stat-value">{{.Stats.TodayDownloads}}</div>
+        <div class="stat-change positive">+{{.Stats.DownloadGrowth}}% 较昨日</div>
+    </div>
+    <div class="stat-card">
+        <h3>存储使用</h3>
+        <div class="stat-value">{{.Stats.StorageUsed}}GB</div>
+        <div class="stat-change">{{.Stats.StorageUsagePercent}}% 已使用</div>
+    </div>
+</div>
+
+<!-- 图表区域 -->
+<div class="chart-container">
+    <div class="chart-title">下载趋势 (最近7天)</div>
+    <div class="chart-placeholder">
+        图表区域 - 可集成 Chart.js 或其他图表库
+    </div>
+</div>
+
+<!-- 最近活动 -->
+<div class="activity-list">
+    <div class="chart-title">最近活动</div>
+    {{range .RecentActivities}}
+    <div class="activity-item">
+        <div class="activity-icon">{{.Icon}}</div>
+        <div class="activity-content">
+            <div class="activity-title">{{.Title}}</div>
+            <div class="activity-time">{{.Time}}</div>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{/* 自定义脚本 */}}
+{{define "scripts"}}
+<script>
+// 页面加载完成后的初始化
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Athens仪表盘已加载');
+    
+    // 这里可以添加图表初始化代码
+    // 例如使用 Chart.js 创建下载趋势图
+});
+</script>
+{{end}}
+{{end}}
