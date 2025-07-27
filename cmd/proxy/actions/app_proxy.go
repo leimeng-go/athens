@@ -39,6 +39,7 @@ func addProxyRoutes(
 	r.HandleFunc("/version", versionHandler)
 	r.HandleFunc("/catalog", catalogHandler(s))
 	r.HandleFunc("/robots.txt", robotsHandler(c))
+	r.HandleFunc("/system/status", systemStatusHandler)
 	
 	//Go模块的索引
 	indexer, err := getIndex(c)
