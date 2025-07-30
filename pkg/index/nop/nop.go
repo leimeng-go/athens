@@ -21,3 +21,7 @@ func (indexer) Index(ctx context.Context, mod, ver string) error {
 func (indexer) Lines(ctx context.Context, since time.Time, limit int) ([]*index.Line, error) {
 	return []*index.Line{}, nil
 }
+
+func (indexer) Total(ctx context.Context) (int, error) {
+	return 0, nil
+}

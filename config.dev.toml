@@ -318,7 +318,7 @@ SingleFlightType = "memory"
 # Possible values are none, memory, mysql, postgres
 # Defaults to none
 # Env override: ATHENS_INDEX_TYPE
-IndexType = "none"
+IndexType = "mysql"
 
 # ShutdownTimeout sets the timeout (in seconds) for open connections when shutting down
 # (via SIGINT or SIGTERM). Connections still open after the timeout will be dropped.

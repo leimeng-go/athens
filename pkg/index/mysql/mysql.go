@@ -100,6 +100,17 @@ func (i *indexer) Lines(ctx context.Context, since time.Time, limit int) ([]*ind
 	return lines, nil
 }
 
+//Total 获取索引总数
+func (i *indexer) Total(ctx context.Context) (int, error) {
+	const op errors.Op = "mysql.Total"
+	var total int
+	err := i.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM indexes`).Scan(&total)
+	if err != nil {
+		return 0, errors.E(op, err)
+	}
+	return total, nil
+}
+
 func getMySQLSource(cfg *config.MySQL) string {
 	c := mysql.NewConfig()
 	c.Net = cfg.Protocol

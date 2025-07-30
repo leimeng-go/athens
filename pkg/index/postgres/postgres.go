@@ -93,6 +93,16 @@ func (i *indexer) Lines(ctx context.Context, since time.Time, limit int) ([]*ind
 	return lines, nil
 }
 
+func (i *indexer) Total(ctx context.Context) (int, error) {
+	const op errors.Op = "postgres.Total"
+	var total int
+	err := i.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM indexes`).Scan(&total)
+	if err != nil {
+		return 0, errors.E(op, err)
+	}
+	return total, nil
+}
+
 func getPostgresSource(cfg *config.Postgres) string {
 	args := make([]string, 0, 5+len(cfg.Params))
 	args = append(args, "host="+cfg.Host)

@@ -54,3 +54,9 @@ func (i *indexer) Lines(_ context.Context, since time.Time, limit int) ([]*index
 	}
 	return lines, nil
 }
+
+func (i *indexer) Total(_ context.Context) (int, error) {
+	i.mu.RLock()
+	defer i.mu.RUnlock()
+	return len(i.lines), nil
+}

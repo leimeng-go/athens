@@ -23,4 +23,7 @@ type Indexer interface {
 	// Lines returns the module@version lines given the time and limit
 	// constraints
 	Lines(ctx context.Context, since time.Time, limit int) ([]*Line, error)
+
+	// Total returns the total number of module@versions in the index backend.
+	Total(ctx context.Context) (int, error)
 }

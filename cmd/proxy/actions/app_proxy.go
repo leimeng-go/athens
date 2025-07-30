@@ -150,7 +150,7 @@ func addProxyRoutes(
 	//注册下载依赖相关路由
 	download.RegisterHandlers(r, handlerOpts)
     //admin 相关路由
-    admin.RegisterHandlers(r)
+    admin.RegisterHandlers(r,handlerOpts)
 
 	return nil
 }
