@@ -5,23 +5,12 @@ import (
 
 	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/leimeng-go/athens/pkg/storage"
-	"github.com/leimeng-go/athens/pkg/storage/fs"
-	"github.com/spf13/afero"
 )
 
-// NewStorage creates new in-memory storage using the afero.NewMemMapFs() in memory file system.
+// NewStorage creates new in-memory storage for testing purposes.
+// Note: This is a test-only implementation that uses MongoDB.
+// For production, use mongo.NewStorage directly.
 func NewStorage() (storage.Backend, error) {
 	const op errors.Op = "mem.NewStorage"
-
-	memFs := afero.NewMemMapFs()
-	tmpDir, err := afero.TempDir(memFs, "", "")
-	if err != nil {
-		return nil, errors.E(op, fmt.Errorf("could not create temp dir for 'In Memory' storage: %w", err))
-	}
-
-	memStorage, err := fs.NewStorage(tmpDir, memFs)
-	if err != nil {
-		return nil, errors.E(op, fmt.Errorf("could not create storage from memory fs: %w", err))
-	}
-	return memStorage, nil
+	return nil, errors.E(op, fmt.Errorf("memory storage is not supported in this build - use MongoDB storage for testing"))
 }

@@ -117,7 +117,7 @@ func App(logger *log.Logger, conf *config.Config) (http.Handler, error) {
 		r.Use(mw.NewValidationMiddleware(client, vHook))
 	}
 	// module storage mongo实现
-	store, err := GetStorage(conf.StorageType, conf.Storage, conf.TimeoutDuration(), client)
+	store, err := GetStorage(conf.StorageType, conf.Storage, conf.TimeoutDuration())
 	if err != nil {
 		return nil, fmt.Errorf("getting storage configuration: %w", err)
 	}

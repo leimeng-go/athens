@@ -1,20 +1,19 @@
 package actions
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/leimeng-go/athens/pkg/index"
 	"github.com/leimeng-go/athens/pkg/log"
-	"github.com/sirupsen/logrus"
 )
 
 func statHandler(index index.Indexer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), log.CtxKey, log.NewEntry(logrus.StandardLogger()))
+		entry := log.NoOpLogger()
+		ctx := log.SetEntryInContext(r.Context(), entry)
 		total, err := index.Total(ctx)
 		if err != nil {
 			log.EntryFromContext(ctx).SystemErr(err)

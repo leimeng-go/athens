@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/leimeng-go/athens/pkg/admin"
 	"github.com/leimeng-go/athens/pkg/config"
 	"github.com/leimeng-go/athens/pkg/download"
 	"github.com/leimeng-go/athens/pkg/download/addons"
@@ -24,7 +25,6 @@ import (
 	"github.com/leimeng-go/athens/pkg/stash"
 	"github.com/leimeng-go/athens/pkg/storage"
 	"github.com/spf13/afero"
-	"github.com/leimeng-go/athens/pkg/admin"
 )
 
 func addProxyRoutes(
@@ -40,7 +40,7 @@ func addProxyRoutes(
 	r.HandleFunc("/catalog", catalogHandler(s))
 	r.HandleFunc("/robots.txt", robotsHandler(c))
 	r.HandleFunc("/system/status", systemStatusHandler)
-	
+
 	//Go模块的索引
 	indexer, err := getIndex(c)
 	if err != nil {
@@ -121,7 +121,7 @@ func addProxyRoutes(
 	if err != nil {
 		return err
 	}
-    // go list -m -versions -json 查询仓库的版本列表
+	// go list -m -versions -json 查询仓库的版本列表
 	lister := module.NewVCSLister(c.GoBinary, c.GoBinaryEnvVars, fs, c.TimeoutDuration())
 	// 包装storage 检查storage 中是否存在该模板
 	checker := storage.WithChecker(s)
@@ -149,8 +149,8 @@ func addProxyRoutes(
 	handlerOpts := &download.HandlerOpts{Protocol: dp, Logger: l, DownloadFile: df}
 	//注册下载依赖相关路由
 	download.RegisterHandlers(r, handlerOpts)
-    //admin 相关路由
-    admin.RegisterHandlers(r,handlerOpts)
+	//admin 相关路由
+	admin.RegisterHandlers(r, handlerOpts)
 
 	return nil
 }
@@ -204,18 +204,8 @@ func getSingleFlight(l *log.Logger, c *config.Config, s storage.Backend, checker
 			checker,
 			c.SingleFlight.RedisSentinel.LockConfig,
 		)
-	case "gcp":
-		if c.StorageType != "gcp" {
-			return nil, fmt.Errorf("gcp SingleFlight only works with a gcp storage type and not: %v", c.StorageType)
-		}
-		return stash.WithGCSLock(c.SingleFlight.GCP.StaleThreshold, s)
-	case "azureblob":
-		if c.StorageType != "azureblob" {
-			return nil, fmt.Errorf("azureblob SingleFlight only works with a azureblob storage type and not: %v", c.StorageType)
-		}
-		return stash.WithAzureBlobLock(c.Storage.AzureBlob, c.TimeoutDuration(), checker)
 	default:
-		return nil, fmt.Errorf("unrecognized single flight type: %v", c.SingleFlightType)
+		return nil, fmt.Errorf("only 'memory', 'redis', 'redis-sentinel', and 'etcd' single flight types are supported, got: %v", c.SingleFlightType)
 	}
 }
 

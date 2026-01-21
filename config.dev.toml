@@ -120,8 +120,7 @@ RobotsFile = "robots.txt"
 Timeout = 30000
 
 # StorageType sets the type of storage backend the proxy will use.
-# Possible values are memory, disk, mongo, gcp, minio, s3, azureblob, external
-# Defaults to memory
+# Only mongo is supported in this build
 # Env override: ATHENS_STORAGE_TYPE
 StorageType = "mongo"
 

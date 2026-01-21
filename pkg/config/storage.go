@@ -1,12 +1,6 @@
 package config
 
-// Storage provides configs for various storage backends.
+// Storage provides configs for MongoDB storage backend only.
 type Storage struct {
-	Disk      *DiskConfig
-	GCP       *GCPConfig
-	Minio     *MinioConfig
-	Mongo     *MongoConfig
-	S3        *S3Config
-	AzureBlob *AzureBlobConfig
-	External  *External
+	Mongo *MongoConfig
 }

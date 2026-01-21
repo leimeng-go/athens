@@ -11,9 +11,9 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/go-playground/validator/v10"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/leimeng-go/athens/pkg/download/mode"
 	"github.com/leimeng-go/athens/pkg/errors"
-	"github.com/kelseyhightower/envconfig"
 )
 
 const defaultConfigFile = "athens.toml"
@@ -297,26 +297,10 @@ func validateConfig(config Config) error {
 }
 
 func validateStorage(validate *validator.Validate, storageType string, config *Storage) error {
-	switch storageType {
-	case "memory":
-		return nil
-	case "mongo":
-		return validate.Struct(config.Mongo)
-	case "disk":
-		return validate.Struct(config.Disk)
-	case "minio":
-		return validate.Struct(config.Minio)
-	case "gcp":
-		return validate.Struct(config.GCP)
-	case "s3":
-		return validate.Struct(config.S3)
-	case "azureblob":
-		return validate.Struct(config.AzureBlob)
-	case "external":
-		return validate.Struct(config.External)
-	default:
-		return fmt.Errorf("storage type %q is unknown", storageType)
+	if storageType != "mongo" {
+		return fmt.Errorf("only 'mongo' storage type is supported, got: %q", storageType)
 	}
+	return validate.Struct(config.Mongo)
 }
 
 func validateIndex(validate *validator.Validate, indexType string, config *Index) error {
