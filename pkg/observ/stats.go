@@ -3,19 +3,18 @@ package observ
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"contrib.go.opencensus.io/exporter/prometheus"
-	"contrib.go.opencensus.io/exporter/stackdriver"
 	datadog "github.com/DataDog/opencensus-go-exporter-datadog"
-	"github.com/leimeng-go/athens/pkg/errors"
 	"github.com/gorilla/mux"
+	"github.com/leimeng-go/athens/pkg/errors"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 )
 
 // RegisterStatsExporter determines the type of StatsExporter service for exporting stats from Opencensus
-// Currently it supports: prometheus.
+// Currently it supports: prometheus and datadog
+// Note: Stackdriver support has been removed in this build
 func RegisterStatsExporter(r *mux.Router, statsExporter, service string) (func(), error) {
 	const op errors.Op = "observ.RegisterStatsExporter"
 	stop := func() {}
@@ -25,10 +24,6 @@ func RegisterStatsExporter(r *mux.Router, statsExporter, service string) (func()
 		if err := registerPrometheusExporter(r, service); err != nil {
 			return nil, errors.E(op, err)
 		}
-	case "stackdriver":
-		if stop, err = registerStatsStackDriverExporter(service); err != nil {
-			return nil, errors.E(op, err)
-		}
 	case "datadog":
 		if stop, err = registerStatsDataDogExporter(service); err != nil {
 			return nil, errors.E(op, err)
@@ -36,7 +31,7 @@ func RegisterStatsExporter(r *mux.Router, statsExporter, service string) (func()
 	case "":
 		return nil, errors.E(op, "StatsExporter not specified. Stats won't be collected")
 	default:
-		return nil, errors.E(op, fmt.Sprintf("StatsExporter %s not supported. Please open PR or an issue at github.com/leimeng-go/athens", statsExporter))
+		return nil, errors.E(op, fmt.Sprintf("StatsExporter %s not supported. Only 'prometheus' and 'datadog' are available", statsExporter))
 	}
 	if err = registerViews(); err != nil {
 		return nil, errors.E(op, err)
@@ -71,22 +66,6 @@ func registerStatsDataDogExporter(service string) (func(), error) {
 	}
 	view.RegisterExporter(dd)
 	return dd.Stop, nil
-}
-
-func registerStatsStackDriverExporter(projectID string) (func(), error) {
-	const op errors.Op = "observ.registerStatsStackDriverExporter"
-
-	sd, err := stackdriver.NewExporter(stackdriver.Options{
-		ProjectID: projectID,
-	})
-	if err != nil {
-		return nil, errors.E(op, err)
-	}
-
-	view.RegisterExporter(sd)
-	view.SetReportingPeriod(60 * time.Second)
-
-	return sd.Flush, nil
 }
 
 // registerViews register stats which should be collected in Athens.

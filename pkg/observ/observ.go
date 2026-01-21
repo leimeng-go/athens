@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"contrib.go.opencensus.io/exporter/jaeger"
-	"contrib.go.opencensus.io/exporter/stackdriver"
 	datadog "github.com/DataDog/opencensus-go-exporter-datadog"
 	"github.com/leimeng-go/athens/pkg/errors"
 	"go.opencensus.io/trace"
 )
 
 // RegisterExporter determines the type of TraceExporter service for exporting traces from opencensus
-// User can choose from multiple tracing services (datadog, jaegar)
+// User can choose from multiple tracing services (datadog, jaeger)
+// Note: Stackdriver support has been removed in this build
 // RegisterExporter returns the 'Flush' function for that particular tracing service.
 func RegisterExporter(traceExporter, url, service, env string) (func(), error) {
 	const op errors.Op = "observ.RegisterExporter"
@@ -21,12 +21,10 @@ func RegisterExporter(traceExporter, url, service, env string) (func(), error) {
 		return registerJaegerExporter(url, service, env)
 	case "datadog":
 		return registerDatadogExporter(url, service, env)
-	case "stackdriver":
-		return registerStackdriverExporter(url, env)
 	case "":
 		return nil, errors.E(op, "Exporter not specified. Traces won't be exported")
 	default:
-		return nil, errors.E(op, fmt.Sprintf("Exporter %s not supported. Please open PR or an issue at github.com/leimeng-go/athens", traceExporter))
+		return nil, errors.E(op, fmt.Sprintf("Exporter %s not supported. Only 'jaeger' and 'datadog' are available", traceExporter))
 	}
 }
 
@@ -74,16 +72,6 @@ func registerDatadogExporter(url, service, env string) (func(), error) {
 		})
 	traceRegisterExporter(ex, env)
 	return ex.Stop, nil
-}
-
-func registerStackdriverExporter(projectID, env string) (func(), error) {
-	const op errors.Op = "observ.registerStackdriverExporter"
-	ex, err := stackdriver.NewExporter(stackdriver.Options{ProjectID: projectID})
-	if err != nil {
-		return nil, errors.E(op, err)
-	}
-	traceRegisterExporter(ex, env)
-	return ex.Flush, nil
 }
 
 // StartSpan takes in a Context Interface and opName and starts a span. It returns the new attached ObserverContext
