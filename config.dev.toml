@@ -288,28 +288,9 @@ DownloadURL = ""
 
 # SingleFlightType determines what mechanism Athens uses
 # to manage concurrency flowing into the Athens Backend.
-# This is important for the following scenario: if two concurrent requests
-# were made to Athens that wanted to store the same module at the same time,
-# we want to make sure only the first request gets to store the module,
-# and the second request will wait for the first one to finish so that
-# it doesn't override the storage.
-
-# Options are ["memory", "etcd", "redis", "redis-sentinel", "gcp", "azureblob"]
-
-# The default option is "memory" which means that only one instance of Athens
-# should be used.
-# The "gcp" single flight will assume that you have a "gcp" StorageType
-# and therefore it will use its strong-consistency features to ensure
-# that only one module is ever written even when concurrent saves happen
-# at the same time.
-# The "azureblob" single flight will assume that you have a "azureblob" StorageType
-# and therefore it will use its strong-consistency features to ensure
-# that only one module is ever written even when concurrent saves happen
-# at the same time.
-# The "redis" single flight will use a single redis instance as a locking mechanism
-# for updating the underlying storage
-# The "redis-sentinel" single flight works similarly to "redis" but obtains a redis connection
-# via a redis-sentinel
+# For MongoDB storage, use "memory" for single instance deployment
+# Options are ["memory", "etcd", "redis", "redis-sentinel"]
+# Note: "gcp" and "azureblob" options have been removed as those storage types are not supported
 # Env override: ATHENS_SINGLE_FLIGHT_TYPE
 SingleFlightType = "memory"
 
@@ -385,72 +366,9 @@ ShutdownTimeout = 60
             # Env override: ATHENS_REDIS_LOCK_MAX_RETRIES
             MaxRetries = 10
     [SingleFlight.GCP]
-        # Threshold for how long to wait in seconds for an in-progress GCP upload to
-        # be considered to have failed to unlock.
-        StaleThreshold = 120
+        # GCP and AzureBlob SingleFlight have been removed as those storage types are not supported
 [Storage]
-    # Only storage backends that are specified in Proxy.StorageType are required here
-    [Storage.CDN]
-        # Endpoint for CDN storage
-        # Env override: CDN_ENDPOINT
-        Endpoint = "cdn.example.com"
-
-    [Storage.Disk]
-        # RootPath is the Athens Disk Root folder
-        # Env override: ATHENS_DISK_STORAGE_ROOT
-        RootPath = "/path/on/disk"
-
-    [Storage.GCP]
-        # Required IAM Roles (https://cloud.google.com/storage/docs/access-control/iam-roles):
-        # - roles/storage.objectCreator
-        # - roles/storage.objectViewer
-        # - roles/storage.legacyBucketReader
-
-        # ProjectID to use for GCP Storage
-        # Env override: GOOGLE_CLOUD_PROJECT
-        ProjectID = "MY_GCP_PROJECT_ID"
-
-        # Bucket to use for GCP Storage
-        # Env override: ATHENS_STORAGE_GCP_BUCKET
-        Bucket = "MY_GCP_BUCKET"
-
-        # JSONKey is a base64 encoded service account 
-        # key that allows Athens to be run outside of GCP
-        # but still be able to access GCS. This is not needed
-        # when relying on default GCP authentication with 
-        # GOOGLE_APPLICATION_CREDENTIALS variable set up. 
-        # See https://cloud.google.com/docs/authentication/getting-started.
-        #
-        # Env override: ATHENS_STORAGE_GCP_JSON_KEY
-        JSONKey = ""
-
-    [Storage.Minio]
-        # Endpoint for Minio storage
-        # Env override: ATHENS_MINIO_ENDPOINT
-        Endpoint = "127.0.0.1:9001"
-
-        # Access Key for Minio storage
-        # Env override: ATHENS_MINIO_ACCESS_KEY_ID
-        Key = "minio"
-
-        # Secret Key for Minio storage
-        # Env override: ATHENS_MINIO_SECRET_ACCESS_KEY
-        Secret = "minio123"
-
-        # Enable SSL for Minio connections
-        # Defaults to true
-        # Env override: ATHENS_MINIO_USE_SSL
-        EnableSSL = false
-
-        # Minio Bucket to use for storage
-        # Defaults to gomods
-        # Env override: ATHENS_MINIO_BUCKET_NAME
-        Bucket = "gomods"
-
-        # Region for Minio storage
-        # Env override: ATHENS_MINIO_REGION
-        Region = ""
-
+    # Only MongoDB storage backend is supported
     [Storage.Mongo]
         # Full connection string for mongo storage
         # Env override: ATHENS_MONGO_STORAGE_URL
@@ -468,100 +386,6 @@ ShutdownTimeout = 60
         # Should be used for testing or development only
         # Env override: ATHENS_MONGO_INSECURE
         Insecure = false
-
-    [Storage.S3]
-        ### The authentication model is as below for S3 in the following order
-        ### If AWS_CREDENTIALS_ENDPOINT is specified and it returns valid results, then it is used
-        ### If config variables are specified and they are valid, then they return valid results, then it is used
-        ### Otherwise, it will default to default configurations which is as follows
-        # attempt to find credentials in the environment, in the shared
-        # configuration (~/.aws/credentials) and from ec2 instance role
-        # credentials. See
-        # https://godoc.org/github.com/aws/aws-sdk-go#hdr-Configuring_Credentials
-        # and
-        # https://godoc.org/github.com/aws/aws-sdk-go/aws/session#hdr-Environment_Variables
-        # for environment variables that will affect the aws configuration.
-        # Setting UseDefaultConfiguration would only use default configuration. It will be deprecated in future releases
-        # and is recommended not to use it.
-
-        # Region for S3 storage
-        # Env override: AWS_REGION
-        Region = "MY_AWS_REGION"
-
-        # Access Key for S3 storage
-        # Env override: AWS_ACCESS_KEY_ID
-        Key = "MY_AWS_ACCESS_KEY_ID"
-
-        # Secret Key for S3 storage
-        # Env override: AWS_SECRET_ACCESS_KEY
-        Secret = "MY_AWS_SECRET_ACCESS_KEY"
-
-        # Session Token for S3 storage
-        # Env override: AWS_SESSION_TOKEN
-        Token = ""
-
-        # S3 Bucket to use for storage
-        # Env override: ATHENS_S3_BUCKET_NAME
-        Bucket = "MY_S3_BUCKET_NAME"
-
-        # If true then path style url for s3 endpoint will be used
-        # Env override: AWS_FORCE_PATH_STYLE
-        ForcePathStyle = false
-
-        # If true then the default aws configuration will be used. This will
-        # attempt to find credentials in the environment, in the shared
-        # configuration (~/.aws/credentials) and from ec2 instance role
-        # credentials. See
-        # https://godoc.org/github.com/aws/aws-sdk-go#hdr-Configuring_Credentials
-        # and
-        # https://godoc.org/github.com/aws/aws-sdk-go/aws/session#hdr-Environment_Variables
-        # for environment variables that will affect the aws configuration.
-        UseDefaultConfiguration = false
-
-        # https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/endpointcreds/
-        CredentialsEndpoint = ""
-
-        # conainer relative url (used by fargate) /v2/....
-        # If this is present, it will concatenate to CredentialsEndpoint
-        # If you are planning to use AWS Fargate, please use http://169.254.170.2 for CredentialsEndpoint
-        # Ref: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v2.html
-        AwsContainerCredentialsRelativeURI = ""
-
-        # An optional endpoint URL (hostname only or fully qualified URI)
-        # that overrides the default generated endpoint for S3 storage client.
-        #
-        # You must still provide a `Region` value when specifying an endpoint.
-        # Env override: AWS_ENDPOINT
-        Endpoint = ""
-
-   [Storage.AzureBlob]
-        # Storage Account name for Azure Blob
-        # Env override: ATHENS_AZURE_ACCOUNT_NAME
-        AccountName = "MY_AZURE_BLOB_ACCOUNT_NAME"
-
-        # Account Key to use with the storage account
-        # Env override: ATHENS_AZURE_ACCOUNT_KEY
-        AccountKey = ""
-
-        # Managed Identity Resource Id to use with the storage account
-        # Env override: ATHENS_AZURE_MANAGED_IDENTITY_RESOURCE_ID
-        ManagedIdentityResourceId = ""
-
-        # Storage Resource to use with the storage account
-        # Env override: ATHENS_AZURE_CREDENTIAL_SCOPE
-        CredentialScope = ""
-
-        # Name of container in the blob storage
-        # Env override: ATHENS_AZURE_CONTAINER_NAME
-        ContainerName = "MY_AZURE_BLOB_CONTAINER_NAME"
-
-   [Storage.External]
-        # URL is the external storage URL that Athens 
-        # will use to interact with the backend storage layer.
-        # See https://docs.gomods.io/configuration/storage for implementation 
-        # details.
-        # Env override: ATHENS_EXTERNAL_STORAGE_URL
-        URL = ""
 
 [Index]
     [Index.MySQL]

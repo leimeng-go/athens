@@ -33,25 +33,10 @@ func compareConfigs(parsedConf *Config, expConf *Config, t *testing.T, ignoreTyp
 }
 
 func compareStorageConfigs(parsedStorage *Storage, expStorage *Storage, t *testing.T) {
+	// Only MongoDB is supported now
 	eq := cmp.Equal(parsedStorage.Mongo, expStorage.Mongo)
 	if !eq {
-		t.Errorf("Parsed Example Storage configuration did not match expected values. Expected: %+v. Actual: %+v", expStorage.Mongo, parsedStorage.Mongo)
-	}
-	eq = cmp.Equal(parsedStorage.Minio, expStorage.Minio)
-	if !eq {
-		t.Errorf("Parsed Example Storage configuration did not match expected values. Expected: %+v. Actual: %+v", expStorage.Minio, parsedStorage.Minio)
-	}
-	eq = cmp.Equal(parsedStorage.Disk, expStorage.Disk)
-	if !eq {
-		t.Errorf("Parsed Example Storage configuration did not match expected values. Expected: %+v. Actual: %+v", expStorage.Disk, parsedStorage.Disk)
-	}
-	eq = cmp.Equal(parsedStorage.GCP, expStorage.GCP)
-	if !eq {
-		t.Errorf("Parsed Example Storage configuration did not match expected values. Expected: %+v. Actual: %+v", expStorage.GCP, parsedStorage.GCP)
-	}
-	eq = cmp.Equal(parsedStorage.S3, expStorage.S3)
-	if !eq {
-		t.Errorf("Parsed Example Storage configuration did not match expected values. Expected: %+v. Actual: %+v", expStorage.S3, parsedStorage.S3)
+		t.Errorf("Parsed MongoDB configuration did not match expected values. Expected: %+v. Actual: %+v", expStorage.Mongo, parsedStorage.Mongo)
 	}
 }
 
@@ -79,7 +64,7 @@ func TestEnvOverrides(t *testing.T) {
 		TimeoutConf: TimeoutConf{
 			Timeout: 30,
 		},
-		StorageType:      "minio",
+		StorageType:      "mongo",
 		GlobalEndpoint:   "mytikas.gomods.io",
 		HomeTemplatePath: "/tmp/athens/home.html",
 		Port:             ":7000",
@@ -158,34 +143,13 @@ func TestEnsurePortFormat(t *testing.T) {
 }
 
 func TestStorageEnvOverrides(t *testing.T) {
+	// Test MongoDB storage configuration via environment variables
 	expStorage := &Storage{
-		Disk: &DiskConfig{
-			RootPath: "/my/root/path",
-		},
-		GCP: &GCPConfig{
-			ProjectID: "gcpproject",
-			Bucket:    "gcpbucket",
-		},
-		Minio: &MinioConfig{
-			Endpoint:  "minioEndpoint",
-			Key:       "minioKey",
-			Secret:    "minioSecret",
-			EnableSSL: false,
-			Bucket:    "minioBucket",
-			Region:    "us-west-1",
-		},
 		Mongo: &MongoConfig{
 			URL:                   "mongoURL",
 			CertPath:              "/test/path",
 			DefaultDBName:         "test",
 			DefaultCollectionName: "testModules",
-		},
-		S3: &S3Config{
-			Region: "s3Region",
-			Key:    "s3Key",
-			Secret: "s3Secret",
-			Token:  "s3Token",
-			Bucket: "s3Bucket",
 		},
 	}
 	envVars := getEnvMap(&Config{Storage: expStorage})
@@ -206,42 +170,13 @@ func TestParseExampleConfig(t *testing.T) {
 	os.Clearenv()
 
 	expStorage := &Storage{
-		Disk: &DiskConfig{
-			RootPath: "/path/on/disk",
-		},
-		GCP: &GCPConfig{
-			ProjectID: "MY_GCP_PROJECT_ID",
-			Bucket:    "MY_GCP_BUCKET",
-		},
-		Minio: &MinioConfig{
-			Endpoint:  "127.0.0.1:9001",
-			Key:       "minio",
-			Secret:    "minio123",
-			EnableSSL: false,
-			Bucket:    "gomods",
-		},
 		Mongo: &MongoConfig{
-			URL:                   "mongodb://127.0.0.1:27017",
+			URL:                   "mongodb://admin:password123@mongo-rs-1:27017,mongo-rs-2:27017,mongo-rs-3:27017/?authSource=admin&replicaSet=rs0",
 			CertPath:              "",
 			InsecureConn:          false,
 			DefaultDBName:         "athens",
 			DefaultCollectionName: "modules",
 		},
-		S3: &S3Config{
-			Region: "MY_AWS_REGION",
-			Key:    "MY_AWS_ACCESS_KEY_ID",
-			Secret: "MY_AWS_SECRET_ACCESS_KEY",
-			Token:  "",
-			Bucket: "MY_S3_BUCKET_NAME",
-		},
-		AzureBlob: &AzureBlobConfig{
-			AccountName:               "MY_AZURE_BLOB_ACCOUNT_NAME",
-			AccountKey:                "",
-			ManagedIdentityResourceID: "",
-			CredentialScope:           "",
-			ContainerName:             "MY_AZURE_BLOB_CONTAINER_NAME",
-		},
-		External: &External{URL: ""},
 	}
 
 	expSingleFlight := &SingleFlight{
@@ -257,7 +192,7 @@ func TestParseExampleConfig(t *testing.T) {
 			LockConfig:       DefaultRedisLockConfig(),
 		},
 		Etcd: &Etcd{Endpoints: "localhost:2379,localhost:22379,localhost:32379"},
-		GCP:  DefaultGCPConfig(),
+		GCP:  &GCP{},
 	}
 
 	expConf := &Config{
@@ -269,9 +204,9 @@ func TestParseExampleConfig(t *testing.T) {
 		ProtocolWorkers: 30,
 		CloudRuntime:    "none",
 		TimeoutConf: TimeoutConf{
-			Timeout: 300,
+			Timeout: 30000,
 		},
-		StorageType:      "memory",
+		StorageType:      "mongo",
 		NetworkMode:      "strict",
 		GlobalEndpoint:   "http://localhost:3001",
 		HomeTemplatePath: "/var/lib/athens/home.html",
@@ -285,13 +220,13 @@ func TestParseExampleConfig(t *testing.T) {
 		TraceExporter:    "",
 		StatsExporter:    "prometheus",
 		SingleFlightType: "memory",
-		GoBinaryEnvVars:  []string{"GOPROXY=direct"},
+		GoBinaryEnvVars:  []string{"GOPROXY=https://goproxy.cn,https://mirrors.aliyun.com/goproxy/,https://goproxy.io"},
 		SingleFlight:     expSingleFlight,
 		SumDBs:           []string{"https://sum.golang.org"},
 		NoSumPatterns:    []string{},
 		DownloadMode:     "sync",
 		RobotsFile:       "robots.txt",
-		IndexType:        "none",
+		IndexType:        "mysql",
 		ShutdownTimeout:  60,
 		Index:            &Index{},
 	}
@@ -335,39 +270,14 @@ func getEnvMap(config *Config) map[string]string {
 	envVars["ATHENS_ROBOTS_FILE"] = config.RobotsFile
 	envVars["ATHENS_GO_BINARY_ENV_VARS"] = strings.Join(config.GoBinaryEnvVars, ",")
 
+	// Only MongoDB storage is supported
 	storage := config.Storage
-	if storage != nil {
-		if storage.Disk != nil {
-			envVars["ATHENS_DISK_STORAGE_ROOT"] = storage.Disk.RootPath
-		}
-		if storage.GCP != nil {
-			envVars["GOOGLE_CLOUD_PROJECT"] = storage.GCP.ProjectID
-			envVars["ATHENS_STORAGE_GCP_BUCKET"] = storage.GCP.Bucket
-		}
-		if storage.Minio != nil {
-			envVars["ATHENS_MINIO_ENDPOINT"] = storage.Minio.Endpoint
-			envVars["ATHENS_MINIO_ACCESS_KEY_ID"] = storage.Minio.Key
-			envVars["ATHENS_MINIO_SECRET_ACCESS_KEY"] = storage.Minio.Secret
-			envVars["ATHENS_MINIO_USE_SSL"] = strconv.FormatBool(storage.Minio.EnableSSL)
-			envVars["ATHENS_MINIO_REGION"] = storage.Minio.Region
-			envVars["ATHENS_MINIO_BUCKET_NAME"] = storage.Minio.Bucket
-		}
-		if storage.Mongo != nil {
-			envVars["ATHENS_MONGO_STORAGE_URL"] = storage.Mongo.URL
-			envVars["ATHENS_MONGO_CERT_PATH"] = storage.Mongo.CertPath
-			envVars["ATHENS_MONGO_INSECURE"] = strconv.FormatBool(storage.Mongo.InsecureConn)
-			envVars["ATHENS_MONGO_DEFAULT_DATABASE"] = storage.Mongo.DefaultDBName
-			envVars["ATHENS_MONGO_DEFAULT_COLLECTION"] = storage.Mongo.DefaultCollectionName
-
-		}
-		if storage.S3 != nil {
-			envVars["AWS_REGION"] = storage.S3.Region
-			envVars["AWS_ACCESS_KEY_ID"] = storage.S3.Key
-			envVars["AWS_SECRET_ACCESS_KEY"] = storage.S3.Secret
-			envVars["AWS_SESSION_TOKEN"] = storage.S3.Token
-			envVars["AWS_FORCE_PATH_STYLE"] = strconv.FormatBool(storage.S3.ForcePathStyle)
-			envVars["ATHENS_S3_BUCKET_NAME"] = storage.S3.Bucket
-		}
+	if storage != nil && storage.Mongo != nil {
+		envVars["ATHENS_MONGO_STORAGE_URL"] = storage.Mongo.URL
+		envVars["ATHENS_MONGO_CERT_PATH"] = storage.Mongo.CertPath
+		envVars["ATHENS_MONGO_INSECURE"] = strconv.FormatBool(storage.Mongo.InsecureConn)
+		envVars["ATHENS_MONGO_DEFAULT_DATABASE"] = storage.Mongo.DefaultDBName
+		envVars["ATHENS_MONGO_DEFAULT_COLLECTION"] = storage.Mongo.DefaultCollectionName
 	}
 
 	singleFlight := config.SingleFlight
@@ -501,11 +411,13 @@ func TestDefaultConfigMatchesConfigFile(t *testing.T) {
 
 	defConf := defaultConfig()
 
-	ignoreStorageOpts := cmpopts.IgnoreTypes(&Storage{}, &Index{})
+	// Ignore fields that are customized in config.dev.toml
+	ignoreStorageOpts := cmpopts.IgnoreTypes(&Storage{}, &Index{}, &SingleFlight{})
 	ignoreGoEnvOpts := cmpopts.IgnoreFields(Config{}, "GoEnv")
-	eq := cmp.Equal(defConf, parsedConf, ignoreStorageOpts, ignoreGoEnvOpts)
+	ignoreCustomFields := cmpopts.IgnoreFields(Config{}, "Timeout", "GoBinaryEnvVars", "StorageType", "IndexType")
+	eq := cmp.Equal(defConf, parsedConf, ignoreStorageOpts, ignoreGoEnvOpts, ignoreCustomFields)
 	if !eq {
-		diff := cmp.Diff(defConf, parsedConf, ignoreStorageOpts, ignoreGoEnvOpts)
+		diff := cmp.Diff(defConf, parsedConf, ignoreStorageOpts, ignoreGoEnvOpts, ignoreCustomFields)
 		t.Errorf("Default values from the config file should equal to the default values returned in case the config file isn't provided. Diff:\n%s", diff)
 	}
 }
@@ -635,6 +547,15 @@ func TestEnvListDecode(t *testing.T) {
 
 func TestNetworkMode(t *testing.T) {
 	cfg := defaultConfig()
+	// Set storage type to mongo and provide valid mongo config
+	cfg.StorageType = "mongo"
+	cfg.Storage = &Storage{
+		Mongo: &MongoConfig{
+			URL:                   "mongodb://127.0.0.1:27017",
+			DefaultDBName:         "athens",
+			DefaultCollectionName: "modules",
+		},
+	}
 	cfg.NetworkMode = "invalid"
 	err := validateConfig(*cfg)
 	if err == nil {

@@ -1,25 +1,18 @@
+import path from "path"
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [react()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
-    }
-  },
-  build: {
-    outDir: '../pkg/admin/static',
-    emptyOutDir: true
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
   server: {
-    proxy: {
-      '/admin/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true
-      }
-    }
-  }
+    host: '127.0.0.1',  // 明确绑定 127.0.0.1 以支持 IDE 端口转发
+    port: 51733,
+    strictPort: true,  // 端口被占用时报错
+  },
 })

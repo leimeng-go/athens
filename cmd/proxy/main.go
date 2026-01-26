@@ -32,10 +32,15 @@ func main() {
 		fmt.Println(build.String())
 		os.Exit(0)
 	}
-	conf, err := config.Load(*configFile)
+
+	// 使用 ConfigManager 实现配置热更新
+	configManager, err := config.NewConfigManager(*configFile)
 	if err != nil {
-		stdlog.Fatalf("Could not load config file: %v", err)
+		stdlog.Fatalf("Could not create config manager: %v", err)
 	}
+
+	// 获取初始配置
+	conf := configManager.Get()
 
 	logLvl, err := logrus.ParseLevel(conf.LogLevel)
 	if err != nil {
@@ -43,6 +48,14 @@ func main() {
 	}
 	// 根据conf.CloudRuntime 和 conf.LogFormat 创建logger，设置日志格式
 	logger := athenslog.New(conf.CloudRuntime, logLvl, conf.LogFormat)
+
+	// 注册配置变更回调：更新日志级别
+	configManager.OnChange(func(newConf *config.Config) {
+		if newLogLvl, err := logrus.ParseLevel(newConf.LogLevel); err == nil {
+			logger.Logger.SetLevel(newLogLvl)
+			logger.Infof("Log level updated to: %s", newConf.LogLevel)
+		}
+	})
 
 	// Turn standard logger output into logrus Errors.
 	logrusErrorWriter := logger.WriterLevel(logrus.ErrorLevel)
