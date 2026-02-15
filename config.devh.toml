@@ -36,7 +36,7 @@ GoEnv = "development"
 # 而您传递以下环境变量: ATHENS_GO_BINARY_ENV_VARS='GODEBUG=true'
 # 那么Go二进制文件将接收的最终值是["GODEBUG=true"]而不是["GOPROXY=direct", "GODEBUG=true"]
 # 因此，无论您使用配置文件还是环境变量，请确保您在那里有所有需要的值。
-GoBinaryEnvVars = ["GOPROXY=direct"]
+GoBinaryEnvVars = ["GOPROXY=https://goproxy.cn,https://mirrors.aliyun.com/goproxy/,https://goproxy.io"]
 
 # GoGetWorkers 指定可以并发执行go mod download的次数，
 # 这样低性能实例可以更合理地管理go get，不会耗尽磁盘或内存。
@@ -101,13 +101,12 @@ RobotsFile = "robots.txt"
 # 如果存储后端没有指定超时，此值将用作默认值
 # 默认为300
 # 环境变量覆盖: ATHENS_TIMEOUT
-Timeout = 3000
+Timeout = 30000
 
 # StorageType 设置代理将使用的存储后端类型。
-# 可能的值: memory, disk, mongo, gcp, minio, s3, azureblob, external
-# 默认为memory
+# 只有mongo是此版本中支持的
 # 环境变量覆盖: ATHENS_STORAGE_TYPE
-StorageType = "memory"
+StorageType = "mongo"
 
 # 证书和密钥，使athens使用https而不是纯文本http。
 # 设置两者以启用。
@@ -225,7 +224,7 @@ NoSumPatterns = []
 # 有4个选项:
 # 1. "sync" (默认): 同步下载模块并将结果返回给客户端。
 # 2. "async": 返回404，但异步将模块存储到存储后端。
-# 3. "redirect": 向客户端返回301重定向状态，重定向到上游代理或者VCS，客户端直接从上游获取模板
+# 3. "redirect": 向客户端返回301重定向状态，重定向到上游代理或者VCS，客户端直接从上游获取模块
 #    基础URL为下面的DownloadRedirectURL。
 # 4. "async_redirect": 与选项3相同，但它将异步将模块存储到后端。
 # 5. "none": 如果找不到模块则返回404，什么都不做。
@@ -274,7 +273,7 @@ SingleFlightType = "memory"
 # 可能的值: none, memory, mysql, postgres
 # 默认为none
 # 环境变量覆盖: ATHENS_INDEX_TYPE
-IndexType = "none"
+IndexType = "mysql"
 
 # ShutdownTimeout 设置关闭时开放连接的超时时间（秒）
 # （通过SIGINT或SIGTERM）。超时后仍然开放的连接将被丢弃。

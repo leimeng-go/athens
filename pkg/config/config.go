@@ -22,50 +22,93 @@ import (
 const defaultConfigFile = "athens.toml"
 
 // Config provides configuration values for all components.
+// Config 为所有组件提供配置值
 type Config struct {
 	TimeoutConf
-	GoEnv            string    `envconfig:"GO_ENV"                    validate:"required"`
-	GoBinary         string    `envconfig:"GO_BINARY_PATH"            validate:"required"`
-	GoBinaryEnvVars  EnvList   `envconfig:"ATHENS_GO_BINARY_ENV_VARS"`
-	GoGetWorkers     int       `envconfig:"ATHENS_GOGET_WORKERS"      validate:"required"`
-	GoGetDir         string    `envconfig:"ATHENS_GOGET_DIR"`
-	ProtocolWorkers  int       `envconfig:"ATHENS_PROTOCOL_WORKERS"   validate:"required"`
-	LogLevel         string    `envconfig:"ATHENS_LOG_LEVEL"          validate:"required"`
-	LogFormat        string    `envconfig:"ATHENS_LOG_FORMAT"         validate:"oneof='' 'json' 'plain'"`
-	CloudRuntime     string    `envconfig:"ATHENS_CLOUD_RUNTIME"      validate:"required_without=LogFormat"`
-	EnablePprof      bool      `envconfig:"ATHENS_ENABLE_PPROF"`
-	PprofPort        string    `envconfig:"ATHENS_PPROF_PORT"`
-	FilterFile       string    `envconfig:"ATHENS_FILTER_FILE"`
-	TraceExporterURL string    `envconfig:"ATHENS_TRACE_EXPORTER_URL"`
-	TraceExporter    string    `envconfig:"ATHENS_TRACE_EXPORTER"`
-	StatsExporter    string    `envconfig:"ATHENS_STATS_EXPORTER"`
-	StorageType      string    `envconfig:"ATHENS_STORAGE_TYPE"       validate:"required"`
-	GlobalEndpoint   string    `envconfig:"ATHENS_GLOBAL_ENDPOINT"` // This feature is not yet implemented
-	Port             string    `envconfig:"ATHENS_PORT"`
-	UnixSocket       string    `envconfig:"ATHENS_UNIX_SOCKET"`
-	BasicAuthUser    string    `envconfig:"BASIC_AUTH_USER"`
-	BasicAuthPass    string    `envconfig:"BASIC_AUTH_PASS"`
-	HomeTemplatePath string    `envconfig:"ATHENS_HOME_TEMPLATE_PATH"`
-	ForceSSL         bool      `envconfig:"PROXY_FORCE_SSL"`
-	ValidatorHook    string    `envconfig:"ATHENS_PROXY_VALIDATOR"`
-	PathPrefix       string    `envconfig:"ATHENS_PATH_PREFIX"`
-	NETRCPath        string    `envconfig:"ATHENS_NETRC_PATH"`
-	GithubToken      string    `envconfig:"ATHENS_GITHUB_TOKEN"`
-	HGRCPath         string    `envconfig:"ATHENS_HGRC_PATH"`
-	TLSCertFile      string    `envconfig:"ATHENS_TLSCERT_FILE"`
-	TLSKeyFile       string    `envconfig:"ATHENS_TLSKEY_FILE"`
-	SumDBs           []string  `envconfig:"ATHENS_SUM_DBS"`
-	NoSumPatterns    []string  `envconfig:"ATHENS_GONOSUM_PATTERNS"`
-	DownloadMode     mode.Mode `envconfig:"ATHENS_DOWNLOAD_MODE"`
-	DownloadURL      string    `envconfig:"ATHENS_DOWNLOAD_URL"`
-	NetworkMode      string    `envconfig:"ATHENS_NETWORK_MODE"       validate:"oneof=strict offline fallback"`
-	SingleFlightType string    `envconfig:"ATHENS_SINGLE_FLIGHT_TYPE"`
-	RobotsFile       string    `envconfig:"ATHENS_ROBOTS_FILE"`
-	IndexType        string    `envconfig:"ATHENS_INDEX_TYPE"`
-	ShutdownTimeout  int       `envconfig:"ATHENS_SHUTDOWN_TIMEOUT"   validate:"min=0"`
-	SingleFlight     *SingleFlight
-	Storage          *Storage
-	Index            *Index
+	// GoEnv 指定运行环境类型，支持 'development' 和 'production'
+	GoEnv string `envconfig:"GO_ENV"                    validate:"required"`
+	// GoBinary 指定要使用的 Go 二进制文件路径
+	GoBinary string `envconfig:"GO_BINARY_PATH"            validate:"required"`
+	// GoBinaryEnvVars 传递给 Go 命令的环境变量列表
+	GoBinaryEnvVars EnvList `envconfig:"ATHENS_GO_BINARY_ENV_VARS"`
+	// GoGetWorkers 指定并发执行 go mod download 的工作协程数
+	GoGetWorkers int `envconfig:"ATHENS_GOGET_WORKERS"      validate:"required"`
+	// GoGetDir 指定从 VCS 获取模块的临时目录路径
+	GoGetDir string `envconfig:"ATHENS_GOGET_DIR"`
+	// ProtocolWorkers 指定处理下载协议请求的并发工作协程数
+	ProtocolWorkers int `envconfig:"ATHENS_PROTOCOL_WORKERS"   validate:"required"`
+	// LogLevel 设置日志级别，支持 debug, info, warn, error 等级别
+	LogLevel string `envconfig:"ATHENS_LOG_LEVEL"          validate:"required"`
+	// LogFormat 设置日志输出格式，支持 'json' 或 'plain'
+	LogFormat string `envconfig:"ATHENS_LOG_FORMAT"         validate:"oneof='' 'json' 'plain'"`
+	// CloudRuntime 指定云运行时环境，如 'GCP' 或 'none'
+	CloudRuntime string `envconfig:"ATHENS_CLOUD_RUNTIME"      validate:"required_without=LogFormat"`
+	// EnablePprof 是否启用 pprof 性能分析端点
+	EnablePprof bool `envconfig:"ATHENS_ENABLE_PPROF"`
+	// PprofPort 指定 pprof 性能分析端点监听的端口
+	PprofPort string `envconfig:"ATHENS_PPROF_PORT"`
+	// FilterFile 指定包含排除过滤器规则的文件路径
+	FilterFile string `envconfig:"ATHENS_FILTER_FILE"`
+	// TraceExporterURL 指定分布式追踪导出的目标 URL
+	TraceExporterURL string `envconfig:"ATHENS_TRACE_EXPORTER_URL"`
+	// TraceExporter 指定追踪数据导出器类型，如 'jaeger', 'datadog'
+	TraceExporter string `envconfig:"ATHENS_TRACE_EXPORTER"`
+	// StatsExporter 指定统计信息导出器类型，如 'prometheus'
+	StatsExporter string `envconfig:"ATHENS_STATS_EXPORTER"`
+	// StorageType 指定存储后端类型，如 'memory', 'disk', 'mongo' 等
+	StorageType string `envconfig:"ATHENS_STORAGE_TYPE"       validate:"required"`
+	// GlobalEndpoint 代理缓存未命中时的全局端点（此功能尚未实现）
+	GlobalEndpoint string `envconfig:"ATHENS_GLOBAL_ENDPOINT"` // This feature is not yet implemented
+	// Port 指定代理服务监听的端口
+	Port string `envconfig:"ATHENS_PORT"`
+	// UnixSocket 指定 Unix 域套接字路径（优先级高于 TCP 端口）
+	UnixSocket string `envconfig:"ATHENS_UNIX_SOCKET"`
+	// BasicAuthUser 基本认证用户名
+	BasicAuthUser string `envconfig:"BASIC_AUTH_USER"`
+	// BasicAuthPass 基本认证密码
+	BasicAuthPass string `envconfig:"BASIC_AUTH_PASS"`
+	// HomeTemplatePath 主页 HTML 模板文件路径
+	HomeTemplatePath string `envconfig:"ATHENS_HOME_TEMPLATE_PATH"`
+	// ForceSSL 是否强制 SSL 重定向
+	ForceSSL bool `envconfig:"PROXY_FORCE_SSL"`
+	// ValidatorHook 指定模块验证的钩子端点
+	ValidatorHook string `envconfig:"ATHENS_PROXY_VALIDATOR"`
+	// PathPrefix 指定代理的基础路径前缀
+	PathPrefix string `envconfig:"ATHENS_PATH_PREFIX"`
+	// NETRCPath 指定 .netrc 认证文件路径
+	NETRCPath string `envconfig:"ATHENS_NETRC_PATH"`
+	// GithubToken 用于 GitHub 私有仓库认证的令牌
+	GithubToken string `envconfig:"ATHENS_GITHUB_TOKEN"`
+	// HGRCPath 指定 .hgrc Mercurial 配置文件路径
+	HGRCPath string `envconfig:"ATHENS_HGRC_PATH"`
+	// TLSCertFile TLS 证书文件路径
+	TLSCertFile string `envconfig:"ATHENS_TLSCERT_FILE"`
+	// TLSKeyFile TLS 私钥文件路径
+	TLSKeyFile string `envconfig:"ATHENS_TLSKEY_FILE"`
+	// SumDBs 指定校验和数据库的 URL 列表
+	SumDBs []string `envconfig:"ATHENS_SUM_DBS"`
+	// NoSumPatterns 指定跳过校验和验证的模块模式列表
+	NoSumPatterns []string `envconfig:"ATHENS_GONOSUM_PATTERNS"`
+	// DownloadMode 指定模块下载模式，如 'sync', 'async', 'redirect' 等
+	DownloadMode mode.Mode `envconfig:"ATHENS_DOWNLOAD_MODE"`
+	// DownloadURL 下载模式为 redirect 时使用的目标 URL
+	DownloadURL string `envconfig:"ATHENS_DOWNLOAD_URL"`
+	// NetworkMode 指定网络模式，支持 'strict', 'offline', 'fallback'
+	NetworkMode string `envconfig:"ATHENS_NETWORK_MODE"       validate:"oneof=strict offline fallback"`
+	// SingleFlightType 指定并发控制机制类型
+	SingleFlightType string `envconfig:"ATHENS_SINGLE_FLIGHT_TYPE"`
+	// RobotsFile 指定 robots.txt 文件路径
+	RobotsFile string `envconfig:"ATHENS_ROBOTS_FILE"`
+	// IndexType 指定索引后端类型，如 'mysql', 'postgres'
+	IndexType string `envconfig:"ATHENS_INDEX_TYPE"`
+	// ShutdownTimeout 指定关闭时等待连接的超时时间（秒）
+	ShutdownTimeout int `envconfig:"ATHENS_SHUTDOWN_TIMEOUT"   validate:"min=0"`
+	// SingleFlight 并发控制配置
+	SingleFlight *SingleFlight
+	// Storage 存储后端配置
+	Storage *Storage
+	// Index 索引后端配置
+	Index *Index
 }
 
 // EnvList is a list of key-value environment
