@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/leimeng-go/athens/app/admin"
 	"github.com/leimeng-go/athens/cmd/proxy/actions"
 	"github.com/leimeng-go/athens/internal/shutdown"
 	"github.com/leimeng-go/athens/pkg/build"
@@ -24,7 +25,13 @@ import (
 var (
 	configFile = flag.String("config_file", "", "The path to the config file")
 	version    = flag.Bool("version", false, "Print version information and exit")
+	logger     *athenslog.Logger // 全局 logger 实例
 )
+
+func init() {
+	// 初始化一个默认的 logger 用于启动阶段
+	logger = athenslog.New("none", logrus.InfoLevel, "plain")
+}
 
 func main() {
 	flag.Parse()
@@ -34,10 +41,13 @@ func main() {
 	}
 
 	// 使用 ConfigManager 实现配置热更新
-	configManager, err := config.NewConfigManager(*configFile)
+	configManager, err := config.NewConfigManager(*configFile, logger)
 	if err != nil {
 		stdlog.Fatalf("Could not create config manager: %v", err)
 	}
+
+	// 设置 admin 包的全局 configManager
+	admin.SetConfigManager(configManager)
 
 	// 获取初始配置
 	conf := configManager.Get()
@@ -46,8 +56,8 @@ func main() {
 	if err != nil {
 		stdlog.Fatalf("Could not parse log level %q: %v", conf.LogLevel, err)
 	}
-	// 根据conf.CloudRuntime 和 conf.LogFormat 创建logger，设置日志格式
-	logger := athenslog.New(conf.CloudRuntime, logLvl, conf.LogFormat)
+	// 根据conf.CloudRuntime 和 conf.LogFormat 重新初始化 logger
+	logger = athenslog.New(conf.CloudRuntime, logLvl, conf.LogFormat)
 
 	// 注册配置变更回调：更新日志级别
 	configManager.OnChange(func(newConf *config.Config) {

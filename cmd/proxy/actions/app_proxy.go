@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/leimeng-go/athens/pkg/admin"
+	"github.com/leimeng-go/athens/app/admin"
 	"github.com/leimeng-go/athens/pkg/config"
 	"github.com/leimeng-go/athens/pkg/download"
 	"github.com/leimeng-go/athens/pkg/download/addons"

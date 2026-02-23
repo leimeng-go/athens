@@ -8,15 +8,12 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/BurntSushi/toml"
-	"github.com/fsnotify/fsnotify"
 	"github.com/go-playground/validator/v10"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/leimeng-go/athens/pkg/download/mode"
 	"github.com/leimeng-go/athens/pkg/errors"
-	"github.com/spf13/viper"
 )
 
 const defaultConfigFile = "athens.toml"
@@ -402,103 +399,4 @@ func checkFilePerms(files ...string) error {
 	}
 
 	return nil
-}
-
-// ConfigManager 管理配置热更新
-type ConfigManager struct {
-	mu           sync.RWMutex
-	config       *Config
-	configFile   string
-	v            *viper.Viper
-	onChange     []func(*Config)
-	changeNotify chan struct{}
-}
-
-// NewConfigManager 创建配置管理器并启用热更新
-func NewConfigManager(configFile string) (*ConfigManager, error) {
-	// 初始加载配置
-	initialConfig, err := Load(configFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load initial config: %w", err)
-	}
-
-	cm := &ConfigManager{
-		config:       initialConfig,
-		configFile:   configFile,
-		changeNotify: make(chan struct{}, 1),
-	}
-
-	// 如果没有指定配置文件，不启用热更新
-	if configFile == "" {
-		log.Println("No config file specified, hot reload disabled")
-		return cm, nil
-	}
-
-	// 初始化 Viper
-	cm.v = viper.New()
-	cm.v.SetConfigFile(configFile)
-	cm.v.SetConfigType("toml")
-
-	// 监听配置文件变化
-	cm.v.WatchConfig()
-	cm.v.OnConfigChange(func(e fsnotify.Event) {
-		log.Printf("Config file changed: %s, reloading...", e.Name)
-		if err := cm.reloadConfig(); err != nil {
-			log.Printf("Failed to reload config: %v", err)
-			return
-		}
-		log.Println("Config reloaded successfully")
-
-		// 通知配置变更
-		select {
-		case cm.changeNotify <- struct{}{}:
-		default:
-		}
-
-		// 调用所有变更回调
-		cm.mu.RLock()
-		config := cm.config
-		callbacks := cm.onChange
-		cm.mu.RUnlock()
-
-		for _, callback := range callbacks {
-			callback(config)
-		}
-	})
-
-	log.Printf("Config hot reload enabled for: %s", configFile)
-	return cm, nil
-}
-
-// reloadConfig 重新加载配置文件
-func (cm *ConfigManager) reloadConfig() error {
-	newConfig, err := ParseConfigFile(cm.configFile)
-	if err != nil {
-		return fmt.Errorf("parse config file failed: %w", err)
-	}
-
-	cm.mu.Lock()
-	cm.config = newConfig
-	cm.mu.Unlock()
-
-	return nil
-}
-
-// Get 获取当前配置（线程安全）
-func (cm *ConfigManager) Get() *Config {
-	cm.mu.RLock()
-	defer cm.mu.RUnlock()
-	return cm.config
-}
-
-// OnChange 注册配置变更回调函数
-func (cm *ConfigManager) OnChange(callback func(*Config)) {
-	cm.mu.Lock()
-	defer cm.mu.Unlock()
-	cm.onChange = append(cm.onChange, callback)
-}
-
-// ChangeNotify 返回配置变更通知通道
-func (cm *ConfigManager) ChangeNotify() <-chan struct{} {
-	return cm.changeNotify
 }

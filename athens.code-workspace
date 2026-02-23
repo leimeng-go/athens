@@ -1,0 +1,227 @@
+{
+  "folders": [
+    {
+      "name": "Athens Backend (Go)",
+      "path": "."
+    },
+    {
+      "name": "Athens Frontend (React)",
+      "path": "./frontend"
+    }
+  ],
+  "settings": {
+    // 全局设置
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true
+    },
+    
+    // Go 相关设置（适用于后端）
+    "go.useLanguageServer": true,
+    "go.toolsManagement.autoUpdate": true,
+    "go.testFlags": ["-v", "-count=1"],
+    "go.buildFlags": ["-v"],
+    "go.lintTool": "golangci-lint",
+    "go.lintOnSave": "workspace",
+    "go.formatTool": "goimports",
+    "go.coverOnSingleTest": true,
+    "go.coverageDecorator": {
+      "type": "gutter",
+      "coveredHighlightColor": "rgba(64,128,128,0.5)",
+      "uncoveredHighlightColor": "rgba(128,64,64,0.25)"
+    },
+    
+    // TypeScript/React 相关设置（适用于前端）
+    "typescript.tsdk": "frontend/node_modules/typescript/lib",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    
+    // ESLint 配置
+    "eslint.workingDirectories": [
+      "./frontend"
+    ],
+    
+    // 文件关联
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "[go]": {
+      "editor.defaultFormatter": "golang.go",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+      }
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      // Go 扩展
+      "golang.go",
+      
+      // 前端扩展
+      "bradlc.vscode-tailwindcss",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "ms-vscode.vscode-typescript-next",
+      
+      // 调试工具
+      "firefox-devtools.vscode-firefox-debug",
+      "msjsdiag.debugger-for-chrome",
+      
+      // 通用工具
+      "editorconfig.editorconfig",
+      "eamodio.gitlens"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch Backend (Go Proxy)",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "program": "${workspaceFolder:Athens Backend (Go)}/cmd/proxy",
+        "args": [],
+        "env": {
+          "ATHENS_STORAGE_TYPE": "memory",
+          "GO_ENV": "development"
+        },
+        "showLog": true
+      },
+      {
+        "name": "Launch Frontend Dev Server",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:5173",
+        "webRoot": "${workspaceFolder:Athens Frontend (React)}",
+        "preLaunchTask": "npm: dev (frontend)"
+      },
+      {
+        "name": "Debug Frontend in Firefox",
+        "type": "firefox",
+        "request": "launch",
+        "reAttach": true,
+        "url": "http://localhost:5173",
+        "webRoot": "${workspaceFolder:Athens Frontend (React)}"
+      }
+    ],
+    "compounds": [
+      {
+        "name": "Launch Full Stack",
+        "configurations": [
+          "Launch Backend (Go Proxy)",
+          "Launch Frontend Dev Server"
+        ],
+        "stopAll": true
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "npm: dev (frontend)",
+        "type": "shell",
+        "command": "npm",
+        "args": ["run", "dev"],
+        "options": {
+          "cwd": "${workspaceFolder:Athens Frontend (React)}"
+        },
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$tsc-watch"],
+        "isBackground": true
+      },
+      {
+        "label": "go: build (backend)",
+        "type": "shell",
+        "command": "go",
+        "args": ["build", "-v", "./cmd/proxy"],
+        "options": {
+          "cwd": "${workspaceFolder:Athens Backend (Go)}"
+        },
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "silent",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$go"]
+      },
+      {
+        "label": "go: test (backend)",
+        "type": "shell",
+        "command": "go",
+        "args": ["test", "-v", "-count=1", "./..."],
+        "options": {
+          "cwd": "${workspaceFolder:Athens Backend (Go)}"
+        },
+        "group": "test",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$go"]
+      },
+      {
+        "label": "npm: build (frontend)",
+        "type": "shell",
+        "command": "npm",
+        "args": ["run", "build"],
+        "options": {
+          "cwd": "${workspaceFolder:Athens Frontend (React)}"
+        },
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "silent",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$tsc"]
+      },
+      {
+        "label": "npm: lint (frontend)",
+        "type": "shell",
+        "command": "npm",
+        "args": ["run", "lint"],
+        "options": {
+          "cwd": "${workspaceFolder:Athens Frontend (React)}"
+        },
+        "group": "test",
+        "presentation": {
+          "echo": true,
+          "reveal": "silent",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$eslint-stylish"]
+      }
+    ]
+  }
+}

@@ -232,7 +232,7 @@ NoSumPatterns = []
 # 7. "custom:<base64-encoded-hcl>" 与选项6相同，
 #    但文件完全编码在选项中。这对于在无服务器部署中使用环境变量很有用。
 # 环境变量覆盖: ATHENS_DOWNLOAD_MODE
-DownloadMode = "sync"
+DownloadMode = "async_redirect"
 
 # NetworkMode 配置Athens如何返回/list端点的结果，
 # 因为它可以从自己的存储和上游VCS组装。
@@ -376,7 +376,7 @@ ShutdownTimeout = 60
     [Storage.Minio]
         # Minio存储的端点
         # 环境变量覆盖: ATHENS_MINIO_ENDPOINT
-        Endpoint = "127.0.0.1:9001"
+        Endpoint = "127.0.0.1:90011"
 
         # Minio存储的访问密钥
         # 环境变量覆盖: ATHENS_MINIO_ACCESS_KEY_ID
@@ -403,7 +403,7 @@ ShutdownTimeout = 60
     [Storage.Mongo]
         # mongo存储的完整连接字符串
         # 环境变量覆盖: ATHENS_MONGO_STORAGE_URL
-        URL = "mongodb://127.0.0.1:27017"
+        URL = "mongodb://athens:181205@127.0.0.1:27017/athens"
 
         # 如果URL未设置，则为mongo存储设置默认数据库名称
         # 环境变量覆盖: ATHENS_MONGO_DEFAULT_DATABASE
@@ -523,11 +523,11 @@ ShutdownTimeout = 60
 
         # MySQL用户名
         # 环境变量覆盖: ATHENS_INDEX_MYSQL_USER
-        User = "root"
+        User = "athens"
 
         # MySQL密码
         # 环境变量覆盖: ATHENS_INDEX_MYSQL_PASSWORD
-        Password = ""
+        Password = "181205"
 
         # MySQL数据库
         # 环境变量覆盖: ATHENS_INDEX_MYSQL_DATABASE
